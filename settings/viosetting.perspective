@@ -1,0 +1,751 @@
+{
+  "keys": {},
+  "groups": {
+    "pluginmanager": {
+      "keys": {
+        "running-plugins": {
+          "type": "repr",
+          "repr": "{u'rqt_plot/Plot': [1], u'rqt_graph/RosGraph': [1], u'rqt_tf_tree/RosTfTree': [1]}"
+        }
+      },
+      "groups": {
+        "plugin____DockWidgetContainer__1": {
+          "keys": {},
+          "groups": {
+            "dock_widget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "None"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u'imu'"
+                }
+              },
+              "groups": {
+                "mainwindow": {
+                  "keys": {
+                    "geometry": {
+                      "type": "repr(QByteArray.hex)",
+                      "repr(QByteArray.hex)": "QtCore.QByteArray('01d9d0cb000200000000000000000014000005fe000003550000000000000000ffffffffffffffff00000000000000000780')",
+                      "pretty-print": "           U             "
+                    },
+                    "state": {
+                      "type": "repr(QByteArray.hex)",
+                      "repr(QByteArray.hex)": "QtCore.QByteArray('000000ff00000000fd000000010000000200000280000001ccfc0100000001fc00000000000002800000000000fffffffa000000000200000004fb00000042007200710074005f0070006c006f0074005f005f0050006c006f0074005f005f0034005f005f00440061007400610050006c006f00740057006900640067006500740100000000ffffffff0000000000000000fb00000042007200710074005f0070006c006f0074005f005f0050006c006f0074005f005f0033005f005f00440061007400610050006c006f00740057006900640067006500740100000000ffffffff0000000000000000fb00000042007200710074005f0070006c006f0074005f005f0050006c006f0074005f005f0031005f005f00440061007400610050006c006f00740057006900640067006500740100000000ffffffff0000000000000000fb00000042007200710074005f0070006c006f0074005f005f0050006c006f0074005f005f0032005f005f00440061007400610050006c006f00740057006900640067006500740100000000ffffffff0000000000000000000000000000000000000004000000040000000800000008fc00000000')",
+                      "pretty-print": "                                                                                                                                                                                                                           "
+                    }
+                  },
+                  "groups": {}
+                }
+              }
+            }
+          }
+        },
+        "plugin__rqt_image_view__ImageView__1": {
+          "keys": {},
+          "groups": {
+            "dock_widget__ImageViewWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "None"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u'Image View'"
+                }
+              },
+              "groups": {}
+            },
+            "plugin": {
+              "keys": {
+                "max_range": {
+                  "type": "repr",
+                  "repr": "u'10'"
+                },
+                "rotate": {
+                  "type": "repr",
+                  "repr": "u'0'"
+                },
+                "smooth_image": {
+                  "type": "repr",
+                  "repr": "u'false'"
+                },
+                "mouse_pub_topic": {
+                  "type": "repr",
+                  "repr": "u'/ma'"
+                },
+                "num_gridlines": {
+                  "type": "repr",
+                  "repr": "u'0'"
+                },
+                "toolbar_hidden": {
+                  "type": "repr",
+                  "repr": "u'false'"
+                },
+                "zoom1": {
+                  "type": "repr",
+                  "repr": "u'false'"
+                },
+                "dynamic_range": {
+                  "type": "repr",
+                  "repr": "u'false'"
+                },
+                "topic": {
+                  "type": "repr",
+                  "repr": "u''"
+                },
+                "publish_click_location": {
+                  "type": "repr",
+                  "repr": "u'false'"
+                }
+              },
+              "groups": {}
+            }
+          }
+        },
+        "plugin__rqt_plot__Plot__1": {
+          "keys": {},
+          "groups": {
+            "dock_widget__DataPlotWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "True"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "None"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u'gyro'"
+                }
+              },
+              "groups": {}
+            },
+            "plugin": {
+              "keys": {
+                "autoscroll": {
+                  "type": "repr",
+                  "repr": "True"
+                },
+                "plot_type": {
+                  "type": "repr",
+                  "repr": "1"
+                },
+                "topics": {
+                  "type": "repr",
+                  "repr": "[u'/mavros/imu/data/angular_velocity/y', u'/mavros/imu/data/angular_velocity/x', u'/mavros/imu/data/angular_velocity/z']"
+                },
+                "y_limits": {
+                  "type": "repr",
+                  "repr": "[-4.435705184936523, 4.952503204345703]"
+                },
+                "x_limits": {
+                  "type": "repr",
+                  "repr": "[22.91436027601594, 23.47891116142273]"
+                }
+              },
+              "groups": {}
+            }
+          }
+        },
+        "plugin__rqt_plot__Plot__2": {
+          "keys": {},
+          "groups": {
+            "dock_widget__DataPlotWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "u'1'"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u'WF'"
+                }
+              },
+              "groups": {}
+            },
+            "plugin": {
+              "keys": {
+                "autoscroll": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "plot_type": {
+                  "type": "repr",
+                  "repr": "u'1'"
+                },
+                "topics": {
+                  "type": "repr",
+                  "repr": "[u'/mavros/imu/data/linear_acceleration/x', u'/mavros/imu/data/linear_acceleration/y', u'/mavros/imu/data/linear_acceleration/z']"
+                },
+                "y_limits": {
+                  "type": "repr",
+                  "repr": "[u'-10.72059154510498', u'24.43701171875']"
+                },
+                "x_limits": {
+                  "type": "repr",
+                  "repr": "[u'3581.0076644420624', u'3582.0076644420624']"
+                }
+              },
+              "groups": {}
+            }
+          }
+        },
+        "plugin__rqt_plot__Plot__3": {
+          "keys": {},
+          "groups": {
+            "dock_widget__DataPlotWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "u'1'"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u'ACC'"
+                }
+              },
+              "groups": {}
+            },
+            "plugin": {
+              "keys": {
+                "autoscroll": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "plot_type": {
+                  "type": "repr",
+                  "repr": "u'1'"
+                },
+                "topics": {
+                  "type": "repr",
+                  "repr": "[u'/mavros/imu/data/linear_acceleration/x', u'/mavros/imu/data/linear_acceleration/y', u'/mavros/imu/data/linear_acceleration/z']"
+                },
+                "y_limits": {
+                  "type": "repr",
+                  "repr": "[u'-10.72059154510498', u'24.43701171875']"
+                },
+                "x_limits": {
+                  "type": "repr",
+                  "repr": "[u'3581.1525392532349', u'3582.1525392532349']"
+                }
+              },
+              "groups": {}
+            }
+          }
+        },
+        "plugin__rqt_plot__Plot__4": {
+          "keys": {},
+          "groups": {
+            "dock_widget__DataPlotWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "u'1'"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u'wf_gyro'"
+                }
+              },
+              "groups": {}
+            },
+            "plugin": {
+              "keys": {
+                "autoscroll": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "plot_type": {
+                  "type": "repr",
+                  "repr": "u'1'"
+                },
+                "topics": {
+                  "type": "repr",
+                  "repr": "[u'/mavros/imu/data/angular_velocity/y', u'/mavros/imu/data/angular_velocity/x', u'/mavros/imu/data/angular_velocity/z']"
+                },
+                "y_limits": {
+                  "type": "repr",
+                  "repr": "[u'-4.4357051849365234', u'4.9525032043457031']"
+                },
+                "x_limits": {
+                  "type": "repr",
+                  "repr": "[u'3581.3363633155823', u'3582.3363633155823']"
+                }
+              },
+              "groups": {}
+            }
+          }
+        },
+        "plugin__rqt_graph__RosGraph__1": {
+          "keys": {},
+          "groups": {
+            "dock_widget__RosGraphUi": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "True"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "None"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u'Node Graph'"
+                }
+              },
+              "groups": {}
+            },
+            "plugin": {
+              "keys": {
+                "graph_type_combo_box_index": {
+                  "type": "repr",
+                  "repr": "1"
+                },
+                "topic_filter_line_edit_text": {
+                  "type": "repr",
+                  "repr": "u'/'"
+                },
+                "filter_line_edit_text": {
+                  "type": "repr",
+                  "repr": "u'/'"
+                },
+                "highlight_connections_check_box_state": {
+                  "type": "repr",
+                  "repr": "True"
+                },
+                "unreachable_check_box_state": {
+                  "type": "repr",
+                  "repr": "True"
+                },
+                "actionlib_check_box_state": {
+                  "type": "repr",
+                  "repr": "False"
+                },
+                "quiet_check_box_state": {
+                  "type": "repr",
+                  "repr": "True"
+                },
+                "dead_sinks_check_box_state": {
+                  "type": "repr",
+                  "repr": "True"
+                },
+                "leaf_topics_check_box_state": {
+                  "type": "repr",
+                  "repr": "True"
+                },
+                "namespace_cluster_check_box_state": {
+                  "type": "repr",
+                  "repr": "False"
+                },
+                "auto_fit_graph_check_box_state": {
+                  "type": "repr",
+                  "repr": "True"
+                }
+              },
+              "groups": {}
+            }
+          }
+        },
+        "plugin__rqt_publisher__Publisher__1": {
+          "keys": {},
+          "groups": {
+            "dock_widget__PublisherWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "None"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u'Message Publisher'"
+                }
+              },
+              "groups": {}
+            },
+            "plugin": {
+              "keys": {
+                "publishers": {
+                  "type": "repr",
+                  "repr": "u\"[{'type_name': 'geometry_msgs/PoseStamped', 'topic_name': '/mavros/setpoint_position/local', 'enabled': False, 'rate': 10.0, 'expressions': {u'/mavros/setpoint_position/local/pose/position/z': '5'}, 'publisher_id': 0, 'counter': 0}]\""
+                }
+              },
+              "groups": {}
+            }
+          }
+        },
+        "plugin__rqt_topic__TopicPlugin__1": {
+          "keys": {},
+          "groups": {
+            "plugin": {
+              "keys": {
+                "tree_widget_header_state": {
+                  "type": "repr(QByteArray.hex)",
+                  "repr(QByteArray.hex)": "QtCore.QByteArray('000000ff0000000000000001000000010000000301000000000000000000000000000000000000071e000000050101000100000000000000000500000064ffffffff0000008100000003000000050000015200000001000000030000014500000001000000030000007200000001000000030000003d0000000100000003000003d80000000100000003000003e800')",
+                  "pretty-print": "                              d         R     E     r     =            "
+                }
+              },
+              "groups": {}
+            },
+            "dock_widget__TopicWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "None"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u'Topic Monitor'"
+                }
+              },
+              "groups": {}
+            }
+          }
+        },
+        "plugin__rqt_top__TOP__1": {
+          "keys": {},
+          "groups": {
+            "dock_widget__": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "None"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u'Process Monitor'"
+                }
+              },
+              "groups": {}
+            },
+            "plugin": {
+              "keys": {
+                "is_regex": {
+                  "type": "repr",
+                  "repr": "u'0'"
+                },
+                "filter_text": {
+                  "type": "repr",
+                  "repr": "u''"
+                }
+              },
+              "groups": {}
+            }
+          }
+        },
+        "plugin__rqt_robot_monitor__RobotMonitor__1": {
+          "keys": {},
+          "groups": {
+            "plugin": {
+              "keys": {
+                "splitter": {
+                  "type": "repr(QByteArray.hex)",
+                  "repr(QByteArray.hex)": "QtCore.QByteArray('000000ff00000001000000030000006400000064000000c80100000009010000000200')",
+                  "pretty-print": "       d d       "
+                }
+              },
+              "groups": {}
+            }
+          }
+        },
+        "plugin__rqt_ez_publisher__EzPublisher__2": {
+          "keys": {},
+          "groups": {
+            "dock_widget__EzPublisherPluginUi": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "None"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u' (2)'"
+                }
+              },
+              "groups": {}
+            },
+            "plugin": {
+              "keys": {
+                "texts": {
+                  "type": "repr",
+                  "repr": "[u'/para_canny_sigma/data', u'/para_depth_grad_threshold/data']"
+                },
+                "publish_interval": {
+                  "type": "repr",
+                  "repr": "u'1000'"
+                },
+                "configurable": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                }
+              },
+              "groups": {
+                "para_canny_sigma": {
+                  "keys": {
+                    "data_range": {
+                      "type": "repr",
+                      "repr": "(0.05, 0.4)"
+                    },
+                    "data_is_repeat": {
+                      "type": "repr",
+                      "repr": "u'false'"
+                    }
+                  },
+                  "groups": {}
+                },
+                "para_depth_grad_threshold": {
+                  "keys": {
+                    "data_range": {
+                      "type": "repr",
+                      "repr": "(0.01, 0.5)"
+                    },
+                    "data_is_repeat": {
+                      "type": "repr",
+                      "repr": "u'false'"
+                    }
+                  },
+                  "groups": {}
+                }
+              }
+            }
+          }
+        },
+        "plugin__rqt_tf_tree__RosTfTree__2": {
+          "keys": {},
+          "groups": {
+            "plugin": {
+              "keys": {
+                "highlight_connections_check_box_state": {
+                  "type": "repr",
+                  "repr": "True"
+                },
+                "auto_fit_graph_check_box_state": {
+                  "type": "repr",
+                  "repr": "True"
+                }
+              },
+              "groups": {}
+            }
+          }
+        },
+        "plugin__rqt_tf_tree__RosTfTree__1": {
+          "keys": {},
+          "groups": {
+            "dock_widget__RosTfTreeUi": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "True"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "None"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u'TF Tree'"
+                }
+              },
+              "groups": {}
+            },
+            "plugin": {
+              "keys": {
+                "highlight_connections_check_box_state": {
+                  "type": "repr",
+                  "repr": "True"
+                },
+                "auto_fit_graph_check_box_state": {
+                  "type": "repr",
+                  "repr": "True"
+                }
+              },
+              "groups": {}
+            }
+          }
+        },
+        "plugin__rqt_ez_publisher__EzPublisher__1": {
+          "keys": {},
+          "groups": {
+            "dock_widget__EzPublisherPluginUi": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "None"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u''"
+                }
+              },
+              "groups": {}
+            },
+            "plugin": {
+              "keys": {
+                "texts": {
+                  "type": "repr",
+                  "repr": "None"
+                },
+                "publish_interval": {
+                  "type": "repr",
+                  "repr": "u'1000'"
+                },
+                "configurable": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                }
+              },
+              "groups": {
+                "royale_camera_driver": {
+                  "keys": {},
+                  "groups": {
+                    "expo_time_param": {
+                      "keys": {
+                        "data_range": {
+                          "type": "repr",
+                          "repr": "(0, 0)"
+                        },
+                        "data_is_repeat": {
+                          "type": "repr",
+                          "repr": "u'false'"
+                        }
+                      },
+                      "groups": {}
+                    }
+                  }
+                },
+                "para_canny_sigma": {
+                  "keys": {
+                    "data_range": {
+                      "type": "repr",
+                      "repr": "(0.05, 0.5)"
+                    },
+                    "data_is_repeat": {
+                      "type": "repr",
+                      "repr": "u'true'"
+                    }
+                  },
+                  "groups": {}
+                },
+                "para_depth_grad_threshold": {
+                  "keys": {
+                    "data_range": {
+                      "type": "repr",
+                      "repr": "(0.1, 0.5)"
+                    },
+                    "data_is_repeat": {
+                      "type": "repr",
+                      "repr": "u'true'"
+                    }
+                  },
+                  "groups": {}
+                }
+              }
+            }
+          }
+        },
+        "plugin__rqt_pose_view__PoseView__1": {
+          "keys": {},
+          "groups": {
+            "dock_widget__GLViewWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr",
+                  "repr": "u'true'"
+                },
+                "parent": {
+                  "type": "repr",
+                  "repr": "None"
+                },
+                "dock_widget_title": {
+                  "type": "repr",
+                  "repr": "u'Pose View'"
+                }
+              },
+              "groups": {}
+            },
+            "plugin": {
+              "keys": {
+                "view_matrix": {
+                  "type": "repr",
+                  "repr": "u'[[0.889603853225708, 0.2221427708864212, -0.3990691006183624, 0.0], [-0.45669424533843994, 0.44376760721206665, -0.7710369229316711, 0.0], [0.005813987459987402, 0.8681715726852417, 0.4962291121482849, 0.0], [0.0, -3.0, -14.5, 1.0]]'"
+                }
+              },
+              "groups": {}
+            }
+          }
+        }
+      }
+    },
+    "mainwindow": {
+      "keys": {
+        "geometry": {
+          "type": "repr(QByteArray.hex)",
+          "repr(QByteArray.hex)": "QtCore.QByteArray('01d9d0cb0002000000000039000000150000077f0000043700000039000000150000077f0000043700000000000000000780')",
+          "pretty-print": "     9     7 9     7     "
+        },
+        "state": {
+          "type": "repr(QByteArray.hex)",
+          "repr(QByteArray.hex)": "QtCore.QByteArray('000000ff00000000fd0000000100000003000007470000040dfc0100000003fc00000000000007470000038100fffffffc0200000004fb00000042007200710074005f0070006c006f0074005f005f0050006c006f0074005f005f0033005f005f00440061007400610050006c006f0074005700690064006700650074030000059300000021000001850000040afb00000042007200710074005f0070006c006f0074005f005f0050006c006f0074005f005f0032005f005f00440061007400610050006c006f0074005700690064006700650074030000012c000000910000073f000003ecfb00000042007200710074005f0070006c006f0074005f005f0050006c006f0074005f005f0034005f005f00440061007400610050006c006f0074005700690064006700650074030000054200000025000001ee0000040afc000000000000040d000000de0100001afa000000000100000005fb00000042007200710074005f0070006c006f0074005f005f0050006c006f0074005f005f0031005f005f00440061007400610050006c006f00740057006900640067006500740100000000ffffffff0000016200fffffffb0000004c007200710074005f0074006f007000690063005f005f0054006f0070006900630050006c007500670069006e005f005f0031005f005f0054006f0070006900630057006900640067006500740100000000ffffffff0000000000000000fb00000030005f005f0044006f0063006b0057006900640067006500740043006f006e007400610069006e00650072005f005f00310100000000ffffffff0000000000000000fb00000044007200710074005f00670072006100700068005f005f0052006f007300470072006100700068005f005f0031005f005f0052006f007300470072006100700068005500690100000000ffffffff0000038100fffffffb0000004c007200710074005f00740066005f0074007200650065005f005f0052006f0073005400660054007200650065005f005f0031005f005f0052006f00730054006600540072006500650055006901000003f50000034a000001c100fffffffb00000050007200710074005f0070006f00730065005f0076006900650077005f005f0050006f007300650056006900650077005f005f0031005f005f0047004c00560069006500770057006900640067006500740100000692000000b50000000000000000fb0000004c007200710074005f00740066005f0074007200650065005f005f0052006f0073005400660054007200650065005f005f0032005f005f0052006f0073005400660054007200650065005500690100000586000001c10000000000000000000007470000000000000004000000040000000800000008fc00000001000000030000000100000036004d0069006e0069006d0069007a006500640044006f0063006b00570069006400670065007400730054006f006f006c0062006100720000000000ffffffff0000000000000000')",
+          "pretty-print": "                   G                                              !                                         ,   ?                                       B %                   Brqt_plot__Plot__1__DataPlotWidget          Lrqt_topic__TopicPlugin__1__TopicWidget          0__DockWidgetContainer__1          Drqt_graph__RosGraph__1__RosGraphUi          Lrqt_tf_tree__RosTfTree__1__RosTfTreeUi          Prqt_pose_view__PoseView__1__GLViewWidget          Lrqt_tf_tree__RosTfTree__2__RosTfTreeUi                            6MinimizedDockWidgetsToolbar        "
+        }
+      },
+      "groups": {
+        "toolbar_areas": {
+          "keys": {
+            "MinimizedDockWidgetsToolbar": {
+              "type": "repr",
+              "repr": "8"
+            }
+          },
+          "groups": {}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+<library path="libnodelet_icp">
+  <class name="nodelet_ns/NICP" type="nodelet_ns::NICP" base_class_type="nodelet::Nodelet">
+    <description>
+      ICP node.
+    </description>
+  </class>
+</library>
+

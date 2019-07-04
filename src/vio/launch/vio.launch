@@ -1,0 +1,63 @@
+<launch>
+
+    <node name="rosbag" pkg="rosbag" type="play" args="$(find vio)/bag/uav.bag" />
+
+    <node pkg="vio" type="topic2file" name="ekf2file" output="log">
+        <remap from="~odom"        to="/ekf/ekf_odom"/>
+        <param name="filepath"     type="string"  value="/home/gh034/ekftrj.txt"/>
+    </node>
+
+    <node pkg="vio" type="topic2file" name="gt2file" output="log">
+        <remap from="~odom"        to="/gt/odom_gt"/>
+        <param name="filepath"     type="string"  value="/home/gh034/gttrj.txt"/>
+    </node>
+
+    <node pkg="vio" type="gt_publisher" name="gt" output="log">
+        <remap from="/gt/vicon" to="/gt"/>
+    </node>
+
+    <node pkg="nodelet" type="nodelet" name="ICP_Node" args="standalone nodelet_ns/NICP" output="screen">
+        <remap from="/vicon" to="/gt"/>
+        <remap from="/mavros/imu/data" to="/imu"/>
+        <remap from="/vicon" to="/gt"/>
+        <remap from="/mavros/imu/data" to="/imu"/>
+
+        <remap from="/NICP/out" to="remapped_output"/>
+        <param name="cam_cal_file" type="string" value="$(find vio)/config/flexx.yml"/>
+
+        <param name="icp/sailentpts_sample_count"     type="int"  value="15000"/>
+        <param name="icp/target_sailentpts_num"       type="int"  value="500"/>
+        <param name="icp/use_depth_grad"              type="int" value="1"/>
+        <param name="icp/use_grey_grad"               type="int" value="1"/>
+        <param name="icp/use_edge_detector"           type="int" value="1"/>
+        <param name="icp/use_canny"                   type="int" value="0"/>
+
+        <param name="icp/sh_backfloor"                type="double" value="0.025"/>
+        <param name="icp/sh_depth"                    type="double" value="0.04"/>
+        <param name="icp/sh_grey"                     type="double" value="120"/>
+        <param name="icp/sh_edge"                     type="double" value="0.015"/>
+
+        <param name="icp/create_PC_by_dimage"         type="int" value="1"/>
+
+        <!-- Init Pose with Motion Capture system data -->
+        <param name="icp/init_pose_with_MC"           type="int" value="1"/>
+        <!-- Init Pose init at the center (0,0,0) with the IMU orientation-->
+        <param name="icp/init_pose_with_IMU"          type="int" value="0"/>
+
+   </node>
+
+
+    <node pkg="vio" type="ekf" name="ekf" output="log">
+        <remap from="~imu"        to="/imu"/>
+        <remap from="~vo"         to="/ICP_Node/icp_odom"/>
+
+        <param name="ekf/ng"      type="double"  value="10.0"/>
+        <param name="ekf/na"      type="double"  value="60.0"/>
+        <param name="ekf/nbg"     type="double" value="10.0"/>
+        <param name="ekf/nba"     type="double" value="60.0"/>
+        <param name="ekf/vo_p"    type="double" value="0.1"/>
+        <param name="ekf/vo_q"    type="double" value="0.1"/>
+    </node>
+
+</launch>
+

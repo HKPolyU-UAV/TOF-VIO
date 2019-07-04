@@ -1,0 +1,2 @@
+mavlink stream -d /dev/ttyS2 -s HIGHRES_IMU -r 150 
+mavlink stream -d /dev/ttyS2 -s ATTITUDE_QUATERNION -r 150 
