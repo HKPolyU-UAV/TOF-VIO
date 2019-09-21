@@ -4,23 +4,26 @@ TOF Camera Visual Initial Odometry
 
 **Videos:**
 
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/IqfIqArsWXA/0.jpg)](https://www.youtube.com/watch?v=IqfIqArsWXA)
+
 **Related Papers:**
 
 ### Prerequisites
 
 Ubuntu 16.04
+
 [ROS Kinetic](http://wiki.ros.org/ROS/Installation)
 
-Wrapper for the experiment platform(optional)
-Using PIXHAWK IMU:
+For the experiment platform(optional)
+PIXHAWK IMU:
 mavros installation
 ```
     sudo apt-get install ros-kinetic-mavros ros-kinetic-mavros-msgs ros-kinetic-mavros-extras 
 ```
-Using PMD TOF CAMERA:
-get [drivers](https://pmdtec.com/picofamily/software/)
-install [royale-ros](https://github.com/ifm/royale-ros)
+PMD Flexx TOF-CAMERA:
+get [drivers](https://pmdtec.com/picofamily/software/) from the PMD website and install [ros wrapper](https://github.com/code-iai/pico_flexx_driver)
 
+### Dataset
 Using our recorded rosbag:
 
 ->[Link1](https://drive.google.com/open?id=1gXFkPzBxnanjrGOZI8xY8oLMl_iN59x7) Hand Held Test 
@@ -60,5 +63,14 @@ Run
 source catkin_ws/devel/setup.bash 
 roslaunch vio vio.launch
 ```
+### Evaluation 
+TUM scripts can be used to evaluate the result, the following are the exported of rosbag result:
 
+Handheld test
+
+<img src="files/HH.png" width="300">
+
+UAV test
+
+<img src="files/UAV.png" width="300">
 
