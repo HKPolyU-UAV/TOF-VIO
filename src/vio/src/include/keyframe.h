@@ -2,6 +2,7 @@
 #define KEYFRAME_H
 
 #include "common.h"
+#include "include/common.h"
 //store 30 key frames in the keyFrame Store
 
 struct KeyFrameItem{
@@ -17,8 +18,8 @@ public:
         warehouseSize=30;
     }
 
-    addItem(CloudTPtr& keyCloud, Eigen::Affine3d& key_pose);
-    searchCloestKeyFrame(Eigen::Affine3d curr_pose, CloudTPtr& keyCloud, Eigen::Affine3d& key_pose);
+    addItem(CloudTPtr& P_key, Eigen::Affine3d& T_cw_key);
+    searchCloestKeyFrame(Eigen::Affine3d T_cw_curr, CloudTPtr& P_key, Eigen::Affine3d& T_cw_key);
 
 private:
     int warehouseSize;

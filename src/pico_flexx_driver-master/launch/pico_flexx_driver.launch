@@ -16,9 +16,9 @@
   <!-- Stream 2 Exposure mode (0 = manual, 1 = automatic) -->
   <arg name="exposure_mode_stream2"  default="1"/>
   <!-- Maximum allowed noise. Data with higher noise will be filtered out. -->
-  <arg name="max_noise"          default="0.05"/>
+  <arg name="max_noise"          default="0.1"/>
   <!-- Filter level (0 = Off, 200 = Legacy, 255 = Full) -->
-  <arg name="filter_level"       default="200"/>
+  <arg name="filter_level"       default="255"/>
   <!-- Range of the 16-Bit mono image which should be mapped to the 0-255 range of the 8-Bit mono image. The resulting range is `range_factor` times the standard deviation arround mean. -->
   <arg name="range_factor"       default="3.0"/>
   <!-- Queue size for publisher. -->
@@ -64,5 +64,10 @@
     <param name="range_factor"       type="double" value="$(arg range_factor)"/>
     <param name="queue_size"         type="int"    value="$(arg queue_size)"/>
     <param name="base_name_tf"       type="str"    value="$(arg base_name_tf)"/>
+
+    <remap from="/pico_flexx/image_mono8" to="/image_nir"/>
+    <remap from="/pico_flexx/image_depth" to="/image_depth"/>
+    <remap from="/pico_flexx/image_depth" to="/points"/>
+
   </node>
 </launch>

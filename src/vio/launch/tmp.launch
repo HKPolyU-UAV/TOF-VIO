@@ -1,0 +1,29 @@
+<launch>
+
+    <node pkg="vio" type="topic2file" name="ekf2file" output="log">
+        <remap from="~odom"        to="/ekf/ekf_odom"/>
+        <param name="filepath"     type="string"  value="/home/gh034/ekftrj.txt"/>
+    </node>
+
+    <node pkg="vio" type="topic2file" name="gt2file" output="log">
+        <remap from="~odom"        to="/gt/odom_gt"/>
+        <param name="filepath"     type="string"  value="/home/gh034/gttrj.txt"/>
+    </node>
+
+    <node pkg="vio" type="gt_publisher" name="gt" output="log">
+        <remap from="/gt/vicon" to="/gt"/>
+    </node>
+
+    <node pkg="vio" type="ekf" name="ekf" output="log">
+        <remap from="~imu"        to="/imu"/>
+        <remap from="~vo"         to="/ICP_Node/icp_odom"/>
+
+        <param name="ekf/ng"      type="double"  value="0.2"/>
+        <param name="ekf/na"      type="double"  value="0.2"/>
+        <param name="ekf/nbg"     type="double" value="0.04"/>
+        <param name="ekf/nba"     type="double" value="0.04"/>
+        <param name="ekf/vo_p"    type="double" value="0.1"/>
+        <param name="ekf/vo_q"    type="double" value="0.1"/>
+    </node>
+
+</launch>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>pico_flexx_driver</name>
+  <version>0.0.0</version>
+  <description>ROS driver for the pmd CamBoard pico flexx</description>
+
+  <maintainer email="amaldo@cs.uni-bremen.de">Alexis Maldonado</maintainer>
+  <maintainer email="martin.guenther@dfki.de">Martin Günther</maintainer>
+
+  <license>GPLv3</license>
+
+  <url type="website">https://github.com/code-iai/pico_flexx_driver</url>
+
+  <author email="wiedemeyer@cs.uni-bremen.de">Thiemo Wiedemeyer</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>nodelet</depend>
+  <depend>roscpp</depend>
+  <depend>rostime</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>dynamic_reconfigure</depend>
+
+  <export>
+    <nodelet plugin="${prefix}/nodelet_plugins.xml" />
+  </export>
+</package>

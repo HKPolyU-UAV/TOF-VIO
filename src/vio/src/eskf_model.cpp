@@ -4,8 +4,8 @@
 #include <eigen3/Eigen/Geometry>
 #include <Eigen/Dense>
 #include <iostream>
-#include <utils/euler_q_rmatrix.h>
-#include <utils/kinetic_math.h>
+#include <euler_q_rmatrix.h>
+#include <kinetic_math.h>
 #include <nav_msgs/Odometry.h>
 
 using namespace std;

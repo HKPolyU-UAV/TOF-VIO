@@ -40,40 +40,29 @@ include_directories(SYSTEM
     ${catkin_INCLUDE_DIRS}
     ${PCL_INCLUDE_DIRS}
     "${CMAKE_CURRENT_SOURCE_DIR}/src/"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/include/"
     )
 
 
-#executable and link
-
-
-#add_executable(vio
-#    ${CMAKE_CURRENT_SOURCE_DIR}/src/node_vio_main.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/src/eskf_fusion.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/src/icp_estimator.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/src/node_vio.cpp
-#    )
-
-#add_executable(preprocessor
-#    ${CMAKE_CURRENT_SOURCE_DIR}/src/common.h
-#    ${CMAKE_CURRENT_SOURCE_DIR}/src/node_preprocessor.cpp
-#    )
-
-#add_executable(tf_broadcaster
-#    ${CMAKE_CURRENT_SOURCE_DIR}/src/node_tf_broadcaster.cpp
-#    )
-
+add_library(nodelet_icp
+    src/node_vo.cpp
+    src/salientpts.cpp
+    src/icp.cpp
+    src/tof_frame.cpp)
 add_executable(gt_publisher
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/gt_publisher.cpp
+    src/node_gt_publisher.cpp
     )
-
-add_library(nodelet_icp src/icptest.cpp)
-add_executable(ekf  src/ekf_node.cpp src/ekf_model.cpp)
-add_executable(eskf src/eskf_node.cpp src/eskf_model.cpp)
-add_executable(topic2file src/odomtopic2file.cpp)
-
-#target_link_libraries(tf_broadcaster ${catkin_LIBRARIES})
-#target_link_libraries(preprocessor ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-#target_link_libraries(vio ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_executable(topic2file
+    src/node_odomtopic2file.cpp
+    )
+add_executable(ekf
+    src/node_ekf.cpp
+    src/ekf_model.cpp
+    )
+add_executable(eskf
+    src/node_eskf.cpp
+    src/eskf_model.cpp
+    )
 
 target_link_libraries(nodelet_icp ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 target_link_libraries(gt_publisher ${catkin_LIBRARIES})

@@ -9,13 +9,14 @@
 #include <sensor_msgs/Range.h>
 #include <nav_msgs/Odometry.h>
 #include <Eigen/Eigen>
-#include <utils/euler_q_rmatrix.h>
 #include <stdio.h>
 #include <math.h>
 #include <deque>
-#include <eskf_model.h>
 #include "visualization_msgs/Marker.h"
 #include <std_msgs/Float64MultiArray.h>
+
+#include <include/euler_q_rmatrix.h>
+#include <include/eskf_model.h>
 
 ros::Publisher odom_pub;
 
