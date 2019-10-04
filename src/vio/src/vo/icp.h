@@ -53,6 +53,9 @@ public:
                  Eigen::Affine3d &T_ts_out,
                  double          &mean_dis_error
                  );
+  static void getAngleandTrans(Eigen::Affine3d tf,
+                               Vector3d& angle,
+                               Vector3d& trans);
 
 
 private:
@@ -63,7 +66,7 @@ private:
                        double &mean_dis
                        );
   void icp_make_pairs(int nns_radius= 10);
-  void getAngleandTrans(Eigen::Affine3d tf, Vector3d& angle, Vector3d& trans);
+
 
   void reprojection(const PointT pt_c, int& u, int& v);
   void remove_motion_induced_outlier();

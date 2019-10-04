@@ -7,6 +7,7 @@
 /**
  * This tutorial demonstrates simple receipt of messages over the ROS system.
  */
+extern ros::Publisher odom_pub;
 
 ros::Publisher odom_pub;
 

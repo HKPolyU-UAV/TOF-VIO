@@ -20,7 +20,26 @@
 
 using namespace std;
 using namespace Eigen;
-const double PI = 3.14159265358;
+
+extern ros::Publisher odom_pub;
+extern ros::Publisher pub_odom_world;
+extern ros::Publisher pub_array;
+extern Mat12x12 Q;
+extern Mat6x6 R_vo;
+extern deque<MatrixXd> state_q;
+extern deque<MatrixXd> covariance_q;
+extern deque<sensor_msgs::Imu> imu_msg_q;
+
+extern ros::Time last_frame_time;
+extern ros::Time last_imu_time;
+extern int initialized;
+extern int got_first_imu;
+
+extern ros::Publisher pub_vel;
+extern Eigen::Quaterniond q_gt;
+extern Eigen::Vector3d position_gt, velocity_gt;
+
+
 ros::Publisher odom_pub;
 ros::Publisher pub_odom_world;
 ros::Publisher pub_array;

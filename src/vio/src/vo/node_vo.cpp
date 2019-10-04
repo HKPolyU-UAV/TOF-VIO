@@ -156,10 +156,10 @@ private:
 
     //Camera to IMU Conversion
     //  0  0  1  0.1
-    // -1  0  0  -0.05
-    //  0 -1  0  -0.02
+    // -1  0  0  0
+    //  0 -1  0  0.01
     //  0  0  0  1
-    T_ic.matrix() << 0,0,1,0.1,-1,0,0,-0.05,0,-1,0,-0.02,0,0,0,1;
+    T_ic.matrix() << 0,0,1,0.1,-1,0,0,0,0,-1,0,0.01,0,0,0,1;
     T_ci = T_ic.inverse();
     cout << "Transformation from camera frame to imu frame :" << endl << T_ic.matrix() << endl;
     //set flags
@@ -182,7 +182,7 @@ private:
     //Sync Sub
     pc_sub.subscribe(node,   "/points", 2);
     grey_sub.subscribe(node, "/image_nir", 2);
-    exactSync_ = new message_filters::Synchronizer<MyExactSyncPolicy>(MyExactSyncPolicy(3), pc_sub, grey_sub);
+    exactSync_ = new message_filters::Synchronizer<MyExactSyncPolicy>(MyExactSyncPolicy(1), pc_sub, grey_sub);
     exactSync_->registerCallback(boost::bind(&NICP::callback, this, _1, _2));
   }
 
@@ -192,7 +192,6 @@ private:
     tic_toc_ros tt_cb;
     curr_frame->read_PC_Iimg_FromROSMsg(pcPtr,mono8Ptr);
     salient_pts_extractor->select_salient_from_pc(curr_frame->sailent_cloud,curr_frame->cloud,curr_frame->i_img);
-    cout << "curr_frame updated" << endl;
 
     if(!icp_init)//first time
     {
@@ -220,37 +219,47 @@ private:
     }
     else
     {
-      cout << FrameCount << endl;
+      cout << "For Frame:" << FrameCount << endl;
       publishPC(curr_frame->cloud,"pico_flexx_optical_frame",pub_cloudin);
       publishPC(key_frame->cloud, "pico_flexx_optical_frame",pub_keypts);
       publishPC(prev_frame->sailent_cloud,"pico_flexx_optical_frame",pub_sailentpts);
       Eigen::Affine3d T_key_curr_guess = key_frame->T_cw * prev_frame->T_cw.inverse();
       Eigen::Affine3d T_key_curr_est;
       double mean_error;
+      //      cout << "keyframe pose " << endl << key_frame->T_cw.matrix() << endl;
+      //      cout << "prevframe pose" << endl << prev_frame->T_cw.matrix() << endl;
+      //      cout << "initial guess " << endl << T_key_curr_guess.matrix() << endl;
 
       icp_alignment->alignment(curr_frame->sailent_cloud,
                                key_frame->cloud,
                                T_key_curr_guess,
                                T_key_curr_est,
                                mean_error);
+      FrameCount++;
 
-      if(mean_error<0.05)
+      if(mean_error<0.1)
       {
         curr_frame->T_cw = T_key_curr_est.inverse() * key_frame->T_cw;
         publish_pose(curr_frame->T_cw , pcPtr->header.stamp );
         publish_tf(curr_frame->T_cw);
-        if(updateKeyFrame==1){
-          cout << "Update the new key Frame" << endl;
-          TOF_Frame::copy(*curr_frame,*key_frame);
-          updateKeyFrame=0;
-        }
-        TOF_Frame::copy(*curr_frame,*prev_frame);
-        curr_frame->clear();
-        FrameCount++;
-//        if(FrameCount%500==0)
+
+        //if(FrameCount%15==0)
+        //{
+        //}
+
+        Vector3d r,t;
+        ICP_ALIGNMENT::getAngleandTrans(T_key_curr_est.inverse(),r,t);
+        double r_norm=fabs(r[0])+fabs(r[1])+fabs(r[2]);
+        double t_norm=fabs(t[0])+fabs(t[1])+fabs(t[2]);
+//        if(r_norm>=0.1 || t_norm>0.3)
 //        {
 //          updateKeyFrame=1;
+//          cout << "Update the new key Frame" << endl;
+//          TOF_Frame::copy(*curr_frame,*key_frame);
 //        }
+
+        TOF_Frame::copy(*curr_frame,*prev_frame);
+        curr_frame->clear();
       }
       else
       {

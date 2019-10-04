@@ -1,15 +1,5 @@
 <launch>
 
-    <node pkg="vio" type="topic2file" name="ekf2file" output="log">
-        <remap from="~odom"        to="/ekf/ekf_odom"/>
-        <param name="filepath"     type="string"  value="/home/gh034/ekftrj.txt"/>
-    </node>
-
-    <node pkg="vio" type="topic2file" name="gt2file" output="log">
-        <remap from="~odom"        to="/gt/odom_gt"/>
-        <param name="filepath"     type="string"  value="/home/gh034/gttrj.txt"/>
-    </node>
-
     <node pkg="vio" type="gt_publisher" name="gt" output="log">
         <remap from="/gt/vicon" to="/gt"/>
     </node>

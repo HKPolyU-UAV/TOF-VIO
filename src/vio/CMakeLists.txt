@@ -61,7 +61,7 @@ add_executable(ekf
     )
 add_executable(eskf
     src/node_eskf.cpp
-    src/eskf_model.cpp
+    src/eskf_imu.cpp
     )
 
 target_link_libraries(nodelet_icp ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})

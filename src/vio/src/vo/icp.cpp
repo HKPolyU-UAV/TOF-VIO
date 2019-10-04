@@ -58,11 +58,9 @@ void ICP_ALIGNMENT::alignment(const CloudTPtr src_in,
   loop_count = 0;
 
   this->T_ts_est=T_ts_guess_in.cast<float>();
-  cout << T_ts_est.matrix() << endl;
 
-  this->icp_make_pairs(15);
-  cout << "make pairs succeed" << endl;
   int converged = 0;
+  this->icp_make_pairs(15);
   this->icp_single_loop(true,false,converged,mean_dis_error);//using robust kernel, without outlier
   cout << "mean_dis_error is " << mean_dis_error << endl;
   //no movement check

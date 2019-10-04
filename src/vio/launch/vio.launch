@@ -1,9 +1,8 @@
 <launch>
 
-    <node name="rosbag" pkg="rosbag" type="play" args="$(find vio)/bag/handheld.bag -s5" />
+    <node name="rosbag" pkg="rosbag" type="play" args="$(find vio)/bag/new_hh.bag" />
 
-
-    <node pkg="nodelet" type="nodelet" name="ICP_Node" args="standalone nodelet_ns/NICP" output="screen">
+    <node pkg="nodelet" type="nodelet" name="ICP_Node" args="standalone nodelet_ns/NICP" output="log">
         <remap from="/vicon" to="/gt"/>
         <remap from="/mavros/imu/data" to="/imu"/>
 
@@ -11,7 +10,7 @@
         <param name="cam_cal_file" type="string" value="$(find vio)/config/flexx.yml"/>
 
         <param name="icp/sailentpts_sample_count"     type="int"  value="15000"/>
-        <param name="icp/target_sailentpts_num"       type="int"  value="500"/>
+        <param name="icp/target_sailentpts_num"       type="int"  value="800"/>
         <param name="icp/use_depth_grad"              type="int" value="1"/>
         <param name="icp/use_intensity_grad"          type="int" value="1"/>
         <param name="icp/use_edge_detector"           type="int" value="0"/>
@@ -31,7 +30,17 @@
         <remap from="/gt/vicon" to="/gt"/>
     </node>
 
-    <node pkg="vio" type="ekf" name="ekf" output="log">
+    <node pkg="vio" type="topic2file" name="ekf2file" output="log">
+        <remap from="~odom"        to="/ekf/ekf_odom"/>
+        <param name="filepath"     type="string"  value="/home/gh034/ekftrj.txt"/>
+    </node>
+
+    <node pkg="vio" type="topic2file" name="gt2file" output="log">
+        <remap from="~odom"        to="/gt/odom_gt"/>
+        <param name="filepath"     type="string"  value="/home/gh034/gttrj.txt"/>
+    </node>
+
+<!--    <node pkg="vio" type="ekf" name="ekf" output="log">
         <remap from="~imu"        to="/imu"/>
         <remap from="~vo"         to="/ICP_Node/icp_odom"/>
 
@@ -41,6 +50,20 @@
         <param name="ekf/nba"     type="double" value="60.0"/>
         <param name="ekf/vo_p"    type="double" value="0.1"/>
         <param name="ekf/vo_q"    type="double" value="0.1"/>
+    </node>-->
+
+    <node pkg="vio" type="eskf" name="eskf" output="screen">
+        <remap from="~imu"        to="/imu"/>
+        <remap from="~vo"         to="/ICP_Node/icp_odom"/>
+
+        <param name="eskf/ng"          type="double"  value="10"/>
+        <param name="eskf/na"          type="double"  value="10"/>
+        <param name="eskf/nbg"         type="double" value="10"/>
+        <param name="eskf/nba"         type="double" value="10"/>
+        <param name="eskf/vo_p"        type="double" value="0.1"/>
+        <param name="eskf/vo_q"        type="double" value="0.1"/>
+        <param name="eskf/vo_delay"    type="double" value="0"/>
+        <!--vo_delay=10: the vo stamp is 10ms later than the acture capture time-->
     </node>
 
 </launch>
