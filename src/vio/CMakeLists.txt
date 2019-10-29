@@ -43,29 +43,37 @@ include_directories(SYSTEM
     "${CMAKE_CURRENT_SOURCE_DIR}/src/include/"
     )
 
-
+##################################################################################
 add_library(nodelet_icp
-    src/node_vo.cpp
-    src/salientpts.cpp
-    src/icp.cpp
-    src/tof_frame.cpp)
-add_executable(gt_publisher
-    src/node_gt_publisher.cpp
+    src/vo/node_vo.cpp
+    src/vo/salientpts.cpp
+    src/vo/icp.cpp
+    src/vo/tof_frame.cpp
     )
-add_executable(topic2file
-    src/node_odomtopic2file.cpp
-    )
-add_executable(ekf
-    src/node_ekf.cpp
-    src/ekf_model.cpp
-    )
-add_executable(eskf
-    src/node_eskf.cpp
-    src/eskf_imu.cpp
-    )
-
 target_link_libraries(nodelet_icp ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-target_link_libraries(gt_publisher ${catkin_LIBRARIES})
+##################################################################################
+add_executable(ekf
+    src/ekf/node_ekf.cpp
+    src/ekf/ekf_model.cpp
+    )
 target_link_libraries(ekf ${catkin_LIBRARIES} )
+##################################################################################
+add_executable(eskf
+    src/eskf/node_eskf.cpp
+    src/eskf/eskf_imu.cpp
+    )
 target_link_libraries(eskf ${catkin_LIBRARIES} )
+##################################################################################
+add_executable(gt_publisher
+    src/tools/node_gt_publisher.cpp
+    )
+target_link_libraries(gt_publisher ${catkin_LIBRARIES})
+##################################################################################
+add_executable(topic2file
+    src/tools/node_odomtopic2file.cpp
+    )
 target_link_libraries(topic2file ${catkin_LIBRARIES})
+##################################################################################
+
+
+

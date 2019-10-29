@@ -1,4 +1,4 @@
-#include "include/icp.h"
+#include <vo/icp.h>
 #include <pcl/common/transforms.h>
 
 using namespace pcl;
@@ -48,72 +48,89 @@ void ICP_ALIGNMENT::alignment(const CloudTPtr src_in,
                               const CloudTPtr tgt_in,
                               Eigen::Affine3d T_ts_guess_in,
                               Eigen::Affine3d &T_ts_out,
-                              double          &mean_dis_error)
+                              double          &mean_dis_error,
+                              int             &loop_count_out,
+                              int             &inlier_count_out)
 {
   //back up src and tgt;
   src.clear();
   tgt.clear();
   copyPointCloud(*src_in, src);
   copyPointCloud(*tgt_in, tgt);
-  loop_count = 0;
+  this->inlier_count = 0;
+  this->loop_count = 0;
 
   this->T_ts_est=T_ts_guess_in.cast<float>();
 
   int converged = 0;
-  this->icp_make_pairs(15);
+  this->icp_make_pairs(21);
   this->icp_single_loop(true,false,converged,mean_dis_error);//using robust kernel, without outlier
-  cout << "mean_dis_error is " << mean_dis_error << endl;
+  //cout << "mean_dis_error is " << mean_dis_error << endl;
   //no movement check
-  if(mean_dis_error <= 0.01)//No movement;
+  if(mean_dis_error <= 0.015)//No movement;
   {
-    cout << "no movement" << endl;
+    //cout << "no movement" << endl;
     T_ts_out = T_ts_guess_in;
+    loop_count_out = this->loop_count;
+    inlier_count_out = this->inlier_count;
     return;
   }
-  this->icp_make_pairs(15);
-  this->icp_single_loop(true,false,converged,mean_dis_error);//using robust kernel
-  cout << "mean_dis_error is" << mean_dis_error << endl;
-  if(converged || (mean_dis_error <= 0.03))
+  this->icp_make_pairs(21);
+  this->icp_single_loop(true,true,converged,mean_dis_error);//using robust kernel
+  //cout << "mean_dis_error is" << mean_dis_error << endl;
+  if(converged || (mean_dis_error <= 0.015))
   {
     T_ts_out = this->T_ts_est.cast<double>();
+    loop_count_out = this->loop_count;
+    inlier_count_out = this->inlier_count;
     return;
   }
 
   for(int i=0; i<2; i++)
   {
-    this->icp_make_pairs(11);
+    this->icp_make_pairs(17);
     this->icp_single_loop(true,true,converged,mean_dis_error);//using robust kernel
-    cout << "mean_dis_error is" << mean_dis_error << endl;
-    if(mean_dis_error <= 0.02)
+    //cout << "mean_dis_error is" << mean_dis_error << endl;
+    if(mean_dis_error <= 0.015)
     {
       T_ts_out = this->T_ts_est.cast<double>();
+      loop_count_out = this->loop_count;
+      inlier_count_out = this->inlier_count;
       return;
     }
   }
 
   for(int i=0; i<2; i++)
   {
-    this->icp_make_pairs(7);
+    this->icp_make_pairs(13);
     this->icp_single_loop(true,true,converged,mean_dis_error);//using robust kernel
-    cout << "mean_dis_error is" << mean_dis_error << endl;
-    if(mean_dis_error <= 0.02)
+    //cout << "mean_dis_error is" << mean_dis_error << endl;
+    if(mean_dis_error <= 0.015)
     {
       T_ts_out = this->T_ts_est.cast<double>();
+      loop_count_out = this->loop_count;
+      inlier_count_out = this->inlier_count;
       return;
     }
   }
 
   for(int i=0; i<3; i++)
   {
-    this->icp_make_pairs(5);
+    this->icp_make_pairs(9);
     this->icp_single_loop(true,true,converged,mean_dis_error);//using robust kernel
-    cout << "mean_dis_error is" << mean_dis_error << endl;
-    if(mean_dis_error <= 0.02)
+    //cout << "mean_dis_error is" << mean_dis_error << endl;
+    if(mean_dis_error <= 0.015)
     {
       T_ts_out = this->T_ts_est.cast<double>();
+      loop_count_out = this->loop_count;
+      inlier_count_out = this->inlier_count;
       return;
     }
   }
+  T_ts_out = this->T_ts_est.cast<double>();
+  loop_count_out = this->loop_count;
+  inlier_count_out = this->inlier_count;
+  return;
 }
 
 void ICP_ALIGNMENT::getAngleandTrans(Eigen::Affine3d tf, Vector3d& angle, Vector3d& trans)
@@ -130,8 +147,8 @@ void ICP_ALIGNMENT::icp_make_pairs(int nns_radius)
   int vmax = pc_height-1;
   int umin,vmin;
   umin=vmin=0;
-  cout << "src cloud size " << src.size() << endl;
-  cout << "tgt cloud size " << tgt.size() << endl;
+//  cout << "src cloud size " << src.size() << endl;
+//  cout << "tgt cloud size " << tgt.size() << endl;
   for(int i=0; i<src.size(); i++){
     PointT pt_in_src=src.at(i);
     PointT pt = transformPoint(src.at(i),T_ts_est);
@@ -151,11 +168,12 @@ void ICP_ALIGNMENT::icp_make_pairs(int nns_radius)
     if(sv_max>=vmax) sv_max = vmax;
 
     int found=0;
+    int step = floor(nns_radius/10)+1;
     double min_sqrdis = 999.0;
     PointT pt_nn;//neareat neiborhood
-    for(int su = su_min; su<=su_max; su++)
+    for(int su = su_min+(rand()%step); su<=su_max; su+=step)
     {
-      for(int sv = sv_min; sv<=sv_max; sv++)
+      for(int sv = sv_min+(rand()%step); sv<=sv_max; sv+=step)
       {
         PointT pt_serach = this->tgt.at(su+sv*pc_width);
         if(pt_serach.z != pt_serach.z) {continue;}//invalid pts
@@ -184,8 +202,7 @@ void ICP_ALIGNMENT::icp_single_loop(bool   use_robust_kernel,
                                     double &mean_dis
                                     )
 {
-
-  cout << "icp single loop" << endl;
+  this->loop_count++;
 
   //Robust Weight Kernel
   for(int count=0; count<5; count++) {
@@ -214,14 +231,14 @@ void ICP_ALIGNMENT::icp_single_loop(bool   use_robust_kernel,
   mean_dp=get<2>(pairs[floor(pairs.size()/2)]);
   mean_dis = mean_dp;
 
-  //Reject
+  //Reject and Remove from source
+  //cout << endl << "remove outlier from pairs " << pairs.size() << " to ";
   if(remove_outlier)
   {
-
     int cut_off = 0;
     for(;cut_off<pairs.size();cut_off++)
     {
-      if(get<2>(pairs[cut_off]) > 3* mean_dp)
+      if(get<2>(pairs[cut_off]) > 1.4* mean_dp)
       {
         break;
       }
@@ -229,7 +246,15 @@ void ICP_ALIGNMENT::icp_single_loop(bool   use_robust_kernel,
     cut_off--;
     pairs.erase(pairs.begin() + cut_off, pairs.end());
   }
+  //cout << pairs.size() << endl;
+  this->inlier_count =  pairs.size();
 
+  this->src.clear();
+  Eigen::Affine3f T_ts_est_inv = T_ts_est.inverse();
+  for(int i=0; i<pairs.size(); i++)
+  {
+    this->src.push_back(transformPoint(get<0>(pairs[i]),T_ts_est_inv));
+  }
 
 
   //3D-3D Alignment
@@ -245,9 +270,9 @@ void ICP_ALIGNMENT::icp_single_loop(bool   use_robust_kernel,
     icp_trans.add(source, target, get<2>(pairs[i]));
   }
   Eigen::Affine3f increTrans= icp_trans.getTransformation();
-  cout <<"increTrans:" << endl << increTrans.matrix() << endl;
+  //cout <<"increTrans:" << endl << increTrans.matrix() << endl;
 
-  this->loop_count++;
+
   T_ts_est = increTrans*T_ts_est;
 
   //check whether it has converged

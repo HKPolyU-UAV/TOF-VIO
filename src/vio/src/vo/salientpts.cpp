@@ -1,4 +1,4 @@
-#include "include/salientpts.h"
+#include "vo/salientpts.h"
 
 
 
@@ -137,8 +137,8 @@ void SalientPts::select_salient_from_pc(CloudTPtr& salient_pc, CloudTPtr pc, con
   }
   if(sailentpts_cnt < min_pts_num)
   {
-    cout << "sailentpts_cnt "<< sailentpts_cnt << " less than " << min_pts_num  << ", add random pts" << endl;
-    for(int sample_count=0; (sailentpts_cnt<min_pts_num || sample_count<5000) ; sample_count++)//sample 5000
+    cout << "sailentpts_cnt "<< sailentpts_cnt << " less than " << min_pts_num  << ", add random pts to ";
+    for(int sample_count=0; (sailentpts_cnt<min_pts_num && sample_count<5000) ; sample_count++)//sample 5000
     {
       int u=rand()%(pc_width-6)+3;
       int v=rand()%(pc_height-6)+3;
@@ -150,5 +150,6 @@ void SalientPts::select_salient_from_pc(CloudTPtr& salient_pc, CloudTPtr pc, con
         continue;
       }
     }
+    cout << sailentpts_cnt << endl;
   }
 }

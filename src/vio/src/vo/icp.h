@@ -22,6 +22,7 @@ class ICP_ALIGNMENT
   CloudT tgt;
   int loop_count;
   int max_loop;
+  int inlier_count;
   Eigen::Affine3f T_ts_est; //transformation for src to tgt;
   std::vector<std::tuple<PointT, PointT, float, float, float>> pairs;
   //from/to/dis/intensity_dis/weight
@@ -51,7 +52,9 @@ public:
                  const CloudTPtr tgt_in,
                  Eigen::Affine3d T_ts_guess_in,
                  Eigen::Affine3d &T_ts_out,
-                 double          &mean_dis_error
+                 double          &mean_dis_error,
+                 int             &loop_count_out,
+                 int             &inlier_count_out
                  );
   static void getAngleandTrans(Eigen::Affine3d tf,
                                Vector3d& angle,

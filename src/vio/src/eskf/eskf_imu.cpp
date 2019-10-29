@@ -1,4 +1,4 @@
-#include <include/eskf_imu.h>
+#include <eskf/eskf_imu.h>
 
 IOFormat CleanFmt(3, 0, "|", "\n", "[", "]");
 
@@ -225,7 +225,7 @@ void ESKF_IMU::read_vo_msg(double secs, double qw, double qx, double qy, double 
   this->z[4]=px-this->states.at(innovation_index).n_state[4];
   this->z[5]=py-this->states.at(innovation_index).n_state[5];
   this->z[6]=pz-this->states.at(innovation_index).n_state[6];
-  cout << "z: " << this->z.transpose() << endl;
+  //cout << "z: " << this->z.transpose() << endl;
 }
 
 void ESKF_IMU::innovate_ErrorState()
@@ -267,7 +267,7 @@ void ESKF_IMU::innovate_Inject_Reset()
 {
 
   SYS_STATE nearest_state = this->states.at(this->innovation_index);
-  cout << "injection of error state at idx: " << this->innovation_index << endl;
+  //cout << "injection of error state at idx: " << this->innovation_index << endl;
   Vec4 q_vec;
   Vec3 etheta;
   Quaterniond q,ethetaq,nq;

@@ -16,8 +16,7 @@
 #include <std_msgs/Float64MultiArray.h>
 
 #include <include/euler_q_rmatrix.h>
-#include <include/eskf_imu.h>
-
+#include <eskf/eskf_imu.h>
 
 
 using namespace std;
@@ -80,7 +79,7 @@ void imu_callback(const sensor_msgs::Imu::ConstPtr &msg)
 
 void odom_callback_vo(const nav_msgs::Odometry::ConstPtr &msg)
 {
-  cout << endl << "in vo callback:" << endl;
+  //cout << endl << "in vo callback:" << endl;
   if (msg->pose.pose.position.x == 0.012345)
   {
     return;
@@ -155,7 +154,7 @@ int main(int argc, char **argv)
   /* pnp position and orientation noise */
   n.getParam("eskf/vo_p", n_vo_p);
   n.getParam("eskf/vo_q", n_vo_q);
-  n.getParam("eskf/vo_delay", vo_delay);
+  n.getParam("eskf/vo_delay_ms", vo_delay);
   /* optical flow noise */
 
   cout << "ng     :" << ng << endl;

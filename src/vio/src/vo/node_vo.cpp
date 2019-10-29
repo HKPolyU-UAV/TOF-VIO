@@ -29,9 +29,9 @@
 #include <include/common.h>
 #include <include/tic_toc_ros.h>
 #include <include/euler_q_rmatrix.h>
-#include <include/salientpts.h>
-#include <include/icp.h>
-#include <include/tof_frame.h>
+#include <vo/salientpts.h>
+#include <vo/icp.h>
+#include <vo/tof_frame.h>
 
 
 using namespace cv;
@@ -57,6 +57,8 @@ private:
   //    Mat             i_img_curr, i_img_prev, i_img_key;
 
   Eigen::Affine3d T_cw_init;
+  Eigen::Affine3d T_cw_imu_last;
+  Eigen::Affine3d T_cw_gt_last;
   Eigen::Affine3d T_ic,T_ci;//T_ic: camera to imu
 
   //Salient Pts extractor and ICP alignment
@@ -68,7 +70,7 @@ private:
   int receive_mc_data;
   int receive_imu_data;
   int FrameCount;
-  int updateKeyFrame;
+  int kf_criteria;
 
   //PUB
   ros::Publisher pub_cloudin;
@@ -107,7 +109,9 @@ private:
     node.getParam("icp/sh_edge",                 sh_edge);
     node.getParam("icp/init_by_IMU",             init_by_IMU);
     node.getParam("icp/init_by_MC",              init_by_MC);
+    node.getParam("icp/kf_criteria",             kf_criteria);
     node.getParam("cam_cal_file", cam_cal_file_path);
+
 
     cameraMatrix = cv::Mat::eye(3, 3, CV_64F);
     distCoeffs   = cv::Mat::zeros(4, 1, CV_64F);
@@ -167,7 +171,6 @@ private:
     receive_mc_data = 0;
     receive_imu_data = 0;
     FrameCount = 0;
-    updateKeyFrame = 0;
 
     //Pub
     pub_cloudin      = node.advertise<sensor_msgs::PointCloud2>   ("icp_cloudin", 1);
@@ -189,17 +192,17 @@ private:
   void callback(const sensor_msgs::PointCloud2ConstPtr & pcPtr,
                 const sensor_msgs::ImageConstPtr & mono8Ptr)
   {
-    tic_toc_ros tt_cb;
+    //tic_toc_ros tt_cb;
     curr_frame->read_PC_Iimg_FromROSMsg(pcPtr,mono8Ptr);
     salient_pts_extractor->select_salient_from_pc(curr_frame->sailent_cloud,curr_frame->cloud,curr_frame->i_img);
 
     if(!icp_init)//first time
     {
-      cout << "init icp" << endl;
       if((receive_mc_data && init_by_MC)||(receive_imu_data && init_by_IMU))
       {
-        mc_sub.shutdown();
-        imu_sub.shutdown();
+        cout << "init icp" << endl;
+        //mc_sub.shutdown();
+        //imu_sub.shutdown();
         curr_frame->T_cw = T_cw_init;
         TOF_Frame::copy(*curr_frame,*prev_frame);
         TOF_Frame::copy(*curr_frame,*key_frame);
@@ -214,50 +217,61 @@ private:
           cout << "init with imu data" << endl;
         }
       }
-      tt_cb.toc("inti icp pose finished");
+      //tt_cb.toc("inti icp pose finished");
       return;
     }
     else
     {
-      cout << "For Frame:" << FrameCount << endl;
+      FrameCount++;
+      cout << "For Frame:" << FrameCount << " ";
       publishPC(curr_frame->cloud,"pico_flexx_optical_frame",pub_cloudin);
       publishPC(key_frame->cloud, "pico_flexx_optical_frame",pub_keypts);
       publishPC(prev_frame->sailent_cloud,"pico_flexx_optical_frame",pub_sailentpts);
       Eigen::Affine3d T_key_curr_guess = key_frame->T_cw * prev_frame->T_cw.inverse();
       Eigen::Affine3d T_key_curr_est;
       double mean_error;
-      //      cout << "keyframe pose " << endl << key_frame->T_cw.matrix() << endl;
-      //      cout << "prevframe pose" << endl << prev_frame->T_cw.matrix() << endl;
+      int loop_count,inlier_count;
+      //      cout << "keyframe pose " << endl << key_frame->T_cw.matrix() << endl;      //      cout << "prevframe pose" << endl << prev_frame->T_cw.matrix() << endl;
       //      cout << "initial guess " << endl << T_key_curr_guess.matrix() << endl;
 
       icp_alignment->alignment(curr_frame->sailent_cloud,
                                key_frame->cloud,
                                T_key_curr_guess,
                                T_key_curr_est,
-                               mean_error);
-      FrameCount++;
+                               mean_error,
+                               loop_count,
+                               inlier_count);
+      cout << "mean error " << mean_error << " with " << loop_count << " loops and contain " << inlier_count << " inliers" << endl;
 
-      if(mean_error<0.1)
+
+      if(mean_error<0.02 && inlier_count>100)//alignment success
       {
-        curr_frame->T_cw = T_key_curr_est.inverse() * key_frame->T_cw;
+        if(kf_criteria==1)//distance based criteria
+        {
+          if(FrameCount%4==0)
+          {
+            cout << "Update the new key Frame" << endl;
+            TOF_Frame::copy(*curr_frame,*key_frame);
+          }
+        }
+        if(kf_criteria==2)//distance based criteria
+        {
+          curr_frame->T_cw = T_key_curr_est.inverse() * key_frame->T_cw;
+          //key frame switch
+          Vector3d r,t;
+          ICP_ALIGNMENT::getAngleandTrans(T_key_curr_est.inverse(),r,t);
+          double r_norm=fabs(r[0])+fabs(r[1])+fabs(r[2]);
+          double t_norm=fabs(t[0])+fabs(t[1])+fabs(t[2]);
+          if(t_norm>0.2)
+          {
+            cout << "Update the new key Frame" << endl;
+            TOF_Frame::copy(*curr_frame,*key_frame);
+          }
+        }
+
+
         publish_pose(curr_frame->T_cw , pcPtr->header.stamp );
         publish_tf(curr_frame->T_cw);
-
-        //if(FrameCount%15==0)
-        //{
-        //}
-
-        Vector3d r,t;
-        ICP_ALIGNMENT::getAngleandTrans(T_key_curr_est.inverse(),r,t);
-        double r_norm=fabs(r[0])+fabs(r[1])+fabs(r[2]);
-        double t_norm=fabs(t[0])+fabs(t[1])+fabs(t[2]);
-//        if(r_norm>=0.1 || t_norm>0.3)
-//        {
-//          updateKeyFrame=1;
-//          cout << "Update the new key Frame" << endl;
-//          TOF_Frame::copy(*curr_frame,*key_frame);
-//        }
-
         TOF_Frame::copy(*curr_frame,*prev_frame);
         curr_frame->clear();
       }
@@ -267,9 +281,9 @@ private:
         odom.header.frame_id = "world";
         odom.header.stamp = pcPtr->header.stamp;
         odom.pose.pose.position.x = 0.012345; odom.pose.pose.position.y = 0; odom.pose.pose.position.z = 0;
-        pub_odom.publish(odom);
+        //pub_odom.publish(odom);
       }
-      tt_cb.toc("Total Processing ");
+      //tt_cb.toc("Total Processing ");
     }
   }
 
@@ -283,10 +297,11 @@ private:
     T_wi.translation() = translation_wi;
     T_wi.linear() = rotation_wi;
     T_iw = T_wi.inverse();
+    T_cw_gt_last = T_ci*T_iw;
     if((receive_mc_data == 0) && init_by_MC)
     {
       cout << "set T_cw_init with MC" << endl;
-      T_cw_init = T_ci*T_iw;
+      T_cw_init = T_cw_gt_last;
       receive_mc_data = 1;
     }
   }
@@ -298,10 +313,11 @@ private:
     T_wi.translation() = Vec3(0,0,0);
     T_wi.linear() = q_WI.toRotationMatrix();
     T_iw = T_wi.inverse();
+    T_cw_imu_last = T_ci*T_iw;
     if(receive_imu_data==0 && init_by_IMU)
     {
       cout << "set T_cw_init with IMU" << endl;
-      T_cw_init = T_ci*T_iw;
+      T_cw_init = T_cw_imu_last;
       receive_imu_data = 1;
     }
   }
@@ -333,8 +349,8 @@ private:
     Matrix3d rot     = T_wi.linear();
     Quaterniond q(rot);
     Vec3 euler = euler_from_rotation_matrix(rot);
-    cout << "Ф:" << std::fixed << euler(0)*57.32 << "  θ:" << euler(1)*57.32 << "  ψ:" << euler(2)*57.32 << " "
-         << "x:" << translation(0) << "  y:" << translation(1) << "  z:" << translation(2) << endl;
+//    cout << "Ф:" << std::fixed << euler(0)*57.32 << "  θ:" << euler(1)*57.32 << "  ψ:" << euler(2)*57.32 << " "
+//         << "x:" << translation(0) << "  y:" << translation(1) << "  z:" << translation(2) << endl;
 
     std_msgs::Float32MultiArray array;
     array.data.clear();

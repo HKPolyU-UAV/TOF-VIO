@@ -16,7 +16,7 @@
 #include <std_msgs/Float64MultiArray.h>
 
 #include <include/euler_q_rmatrix.h>
-#include <include/ekf_model.h>
+#include <ekf/ekf_model.h>
 
 using namespace std;
 using namespace Eigen;
