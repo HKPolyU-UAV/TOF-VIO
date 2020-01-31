@@ -34,6 +34,7 @@ void SalientPts::select_salient_from_pc(CloudTPtr& salient_pc, CloudTPtr pc, con
 {
   salient_pc->clear();
   int sailentpts_cnt = 0;
+  int inputpts_cnt = 0;
   Mat i_canny_dst;
   if(use_canny)
   {
@@ -46,6 +47,7 @@ void SalientPts::select_salient_from_pc(CloudTPtr& salient_pc, CloudTPtr pc, con
       PointT pt = pc->at(u+v*pc_width);
       if(pt.z==pt.z)//valid pts
       {
+        inputpts_cnt++;
         //reject rules
         //background rejection
         float dis = pt.z;
@@ -135,8 +137,11 @@ void SalientPts::select_salient_from_pc(CloudTPtr& salient_pc, CloudTPtr pc, con
       }//valid pts
     }
   }
+  //cout << inputpts_cnt << endl;
+  //cout << sailentpts_cnt << endl;
   if(sailentpts_cnt < min_pts_num)
   {
+    //cout << sailentpts_cnt << endl;
     cout << "sailentpts_cnt "<< sailentpts_cnt << " less than " << min_pts_num  << ", add random pts to ";
     for(int sample_count=0; (sailentpts_cnt<min_pts_num && sample_count<5000) ; sample_count++)//sample 5000
     {

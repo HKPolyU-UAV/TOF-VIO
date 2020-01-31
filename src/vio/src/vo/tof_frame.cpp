@@ -14,6 +14,7 @@ void TOF_Frame::clear()
   this->sailent_cloud->clear();
   this->i_img.release();
   this->T_cw.matrix()<< 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1;
+  this->T_wc=T_cw.inverse();
   /*1,0,0,0,
       0,1,0,0,
       0,0,1,0,
@@ -48,8 +49,12 @@ void TOF_Frame::read_PC_Iimg_FromROSMsg(const sensor_msgs::PointCloud2ConstPtr &
 
 void TOF_Frame::copy(TOF_Frame &from, TOF_Frame &to)
 {
+  to.cloud = CloudT::Ptr(new CloudT);
+  to.sailent_cloud = CloudT::Ptr(new CloudT);
+  to.i_img.release();
   pcl::copyPointCloud(*(from.cloud),*(to.cloud));
   pcl::copyPointCloud(*(from.sailent_cloud),*(to.sailent_cloud));
   to.i_img = from.i_img;
   to.T_cw = from.T_cw;
+  to.T_wc = from.T_wc;
 }

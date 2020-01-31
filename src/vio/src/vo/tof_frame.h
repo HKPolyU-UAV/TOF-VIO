@@ -22,6 +22,7 @@ public:
   typedef std::shared_ptr<TOF_Frame> Ptr;
 
   Eigen::Affine3d T_cw;
+  Eigen::Affine3d T_wc;
   CloudTPtr       cloud;
   CloudTPtr       sailent_cloud;
   Mat             i_img;

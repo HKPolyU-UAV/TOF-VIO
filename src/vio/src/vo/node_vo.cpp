@@ -17,6 +17,7 @@
 //CV
 #include <opencv2/opencv.hpp>
 #include <cv_bridge/cv_bridge.h>
+#include <image_transport/image_transport.h>
 //PCL
 #include <pcl/io/io.h>
 #include <pcl/common/transforms.h>
@@ -52,6 +53,7 @@ public:
 
 private:
   TOF_Frame::Ptr curr_frame,prev_frame,key_frame;
+  std::vector<TOF_Frame> keyframes;
   //    Eigen::Affine3d T_cw_curr,  T_cw_prev,  T_cw_key;
   //    CloudTPtr       P_curr,     P_prev,     P_key;
   //    Mat             i_img_curr, i_img_prev, i_img_key;
@@ -71,6 +73,7 @@ private:
   int receive_imu_data;
   int FrameCount;
   int kf_criteria;
+  bool use_conventional_icp;
 
   //PUB
   ros::Publisher pub_cloudin;
@@ -78,25 +81,27 @@ private:
   ros::Publisher pub_keypts;
   ros::Publisher pub_tf_array;
   ros::Publisher pub_odom;
+  image_transport::Publisher pub_colored_dimg;
   //SUB
   ros::Subscriber mc_sub;
   ros::Subscriber imu_sub;
   message_filters::Subscriber<sensor_msgs::PointCloud2> pc_sub;
-  message_filters::Subscriber<sensor_msgs::Image> grey_sub;
-  typedef message_filters::sync_policies::ExactTime<sensor_msgs::PointCloud2, sensor_msgs::Image> MyExactSyncPolicy;
+  message_filters::Subscriber<sensor_msgs::Image>       grey_sub;
+  message_filters::Subscriber<sensor_msgs::Image>       depth_sub;
+  typedef message_filters::sync_policies::ExactTime<sensor_msgs::PointCloud2, sensor_msgs::Image, sensor_msgs::Image> MyExactSyncPolicy;
   message_filters::Synchronizer<MyExactSyncPolicy> * exactSync_;
 
   virtual void onInit()
   {
     ros::NodeHandle& node = getPrivateNodeHandle();
 
-    string cam_cal_file_path;
+    string  cam_cal_file_path;
     cv::Mat cameraMatrix, distCoeffs;
-    double fx,fy,cx,cy;
-    int pc_height,pc_width;
-    int target_sailentpts_num;
-    int use_depth_grad,use_intensity_grad,use_edge_detector,use_canny;
-    float sh_backfloor, sh_depth, sh_grey, sh_edge;
+    double  fx,fy,cx,cy;
+    int     pc_height,pc_width;
+    int     target_sailentpts_num;
+    int     use_depth_grad,use_intensity_grad,use_edge_detector,use_canny;
+    float   sh_backfloor, sh_depth, sh_grey, sh_edge;
 
     node.getParam("icp/target_sailentpts_num",   target_sailentpts_num);
     node.getParam("icp/use_depth_grad",          use_depth_grad);
@@ -110,7 +115,9 @@ private:
     node.getParam("icp/init_by_IMU",             init_by_IMU);
     node.getParam("icp/init_by_MC",              init_by_MC);
     node.getParam("icp/kf_criteria",             kf_criteria);
+    node.getParam("icp/use_conventional_icp",    use_conventional_icp);
     node.getParam("cam_cal_file", cam_cal_file_path);
+
 
 
     cameraMatrix = cv::Mat::eye(3, 3, CV_64F);
@@ -156,14 +163,16 @@ private:
     curr_frame = std::make_shared<TOF_Frame>();
     prev_frame = std::make_shared<TOF_Frame>();
     key_frame  = std::make_shared<TOF_Frame>();
-
-
+    keyframes.clear();
     //Camera to IMU Conversion
     //  0  0  1  0.1
     // -1  0  0  0
     //  0 -1  0  0.01
     //  0  0  0  1
-    T_ic.matrix() << 0,0,1,0.1,-1,0,0,0,0,-1,0,0.01,0,0,0,1;
+    T_ic.matrix() <<  0, 0, 1, 0.1,
+        -1, 0, 0,   0,
+        0,-1, 0,0.01,
+        0, 0, 0,   1;
     T_ci = T_ic.inverse();
     cout << "Transformation from camera frame to imu frame :" << endl << T_ic.matrix() << endl;
     //set flags
@@ -173,27 +182,38 @@ private:
     FrameCount = 0;
 
     //Pub
-    pub_cloudin      = node.advertise<sensor_msgs::PointCloud2>   ("icp_cloudin", 1);
-    pub_sailentpts   = node.advertise<sensor_msgs::PointCloud2>   ("icp_sailent_pts", 1);
-    pub_keypts       = node.advertise<sensor_msgs::PointCloud2>   ("icp_keypts", 1);
+    pub_cloudin      = node.advertise<sensor_msgs::PointCloud2>   ("/icp_cloudin", 1);
+    pub_sailentpts   = node.advertise<sensor_msgs::PointCloud2>   ("/icp_sailent_pts", 1);
+    pub_keypts       = node.advertise<sensor_msgs::PointCloud2>   ("/icp_keypts", 1);
     pub_tf_array     = node.advertise<std_msgs::Float32MultiArray>("/arrayxyz", 1);
-    pub_odom         = node.advertise<nav_msgs::Odometry>         ("icp_odom", 1);
+    pub_odom         = node.advertise<nav_msgs::Odometry>         ("/icp_odom", 1);
+    image_transport::ImageTransport it(node);
+    pub_colored_dimg = it.advertise("/colored_dimg", 1);
 
     //Sub
-    mc_sub  = node.subscribe("/vicon", 1, &NICP::mc_callback, this);
-    imu_sub = node.subscribe("/mavros/imu/data", 1, &NICP::imu_callback, this);
+    mc_sub  = node.subscribe("/input_gt", 1, &NICP::mc_callback, this);
+    imu_sub = node.subscribe("/input_imu", 1, &NICP::imu_callback, this);
     //Sync Sub
-    pc_sub.subscribe(node,   "/points", 2);
-    grey_sub.subscribe(node, "/image_nir", 2);
-    exactSync_ = new message_filters::Synchronizer<MyExactSyncPolicy>(MyExactSyncPolicy(1), pc_sub, grey_sub);
-    exactSync_->registerCallback(boost::bind(&NICP::callback, this, _1, _2));
+    pc_sub.subscribe   (node,   "/input_tof_pc",   2);
+    grey_sub.subscribe (node,   "/input_tof_nir", 2);
+    depth_sub.subscribe(node,   "/input_tof_depth", 2);
+    exactSync_ = new message_filters::Synchronizer<MyExactSyncPolicy>(MyExactSyncPolicy(1), pc_sub, grey_sub,depth_sub);
+    exactSync_->registerCallback(boost::bind(&NICP::tof_callback, this, _1, _2, _3));
+    cout << "start the thread" << endl;
   }
 
-  void callback(const sensor_msgs::PointCloud2ConstPtr & pcPtr,
-                const sensor_msgs::ImageConstPtr & mono8Ptr)
+  void tof_callback(const sensor_msgs::PointCloud2ConstPtr& pcPtr,
+                    const sensor_msgs::ImageConstPtr& mono8Ptr,
+                    const sensor_msgs::ImageConstPtr& depthPtr)
   {
     //tic_toc_ros tt_cb;
     curr_frame->read_PC_Iimg_FromROSMsg(pcPtr,mono8Ptr);
+    Mat dimg = cv_bridge::toCvCopy(depthPtr,  depthPtr->encoding)->image;
+    Mat colored_dimg;
+    visualizeDepthImg(colored_dimg,dimg);
+    sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", colored_dimg).toImageMsg();
+    pub_colored_dimg.publish(msg);
+
     salient_pts_extractor->select_salient_from_pc(curr_frame->sailent_cloud,curr_frame->cloud,curr_frame->i_img);
 
     if(!icp_init)//first time
@@ -201,15 +221,21 @@ private:
       if((receive_mc_data && init_by_MC)||(receive_imu_data && init_by_IMU))
       {
         cout << "init icp" << endl;
+        Eigen::Affine3d T_wc;
         //mc_sub.shutdown();
         //imu_sub.shutdown();
         curr_frame->T_cw = T_cw_init;
+        T_wc = T_cw_init.inverse();
+        Mat3x3 R_bias;
+        curr_frame->T_wc = T_wc;
+        curr_frame->T_cw = T_wc.inverse();
         TOF_Frame::copy(*curr_frame,*prev_frame);
         TOF_Frame::copy(*curr_frame,*key_frame);
+        keyframes.push_back(*curr_frame);
         FrameCount = 1;
         icp_init = 1;
-        publish_pose(T_cw_init,pcPtr->header.stamp);
-        publish_tf(T_cw_init);
+        publish_pose(curr_frame->T_cw,pcPtr->header.stamp);
+        publish_tf(curr_frame->T_cw);
         if(receive_mc_data && init_by_MC){
           cout << "init with motion capture system data" << endl;
         }
@@ -223,52 +249,100 @@ private:
     else
     {
       FrameCount++;
-      cout << "For Frame:" << FrameCount << " ";
-      publishPC(curr_frame->cloud,"pico_flexx_optical_frame",pub_cloudin);
-      publishPC(key_frame->cloud, "pico_flexx_optical_frame",pub_keypts);
-      publishPC(prev_frame->sailent_cloud,"pico_flexx_optical_frame",pub_sailentpts);
-      Eigen::Affine3d T_key_curr_guess = key_frame->T_cw * prev_frame->T_cw.inverse();
-      Eigen::Affine3d T_key_curr_est;
-      double mean_error;
-      int loop_count,inlier_count;
-      //      cout << "keyframe pose " << endl << key_frame->T_cw.matrix() << endl;      //      cout << "prevframe pose" << endl << prev_frame->T_cw.matrix() << endl;
-      //      cout << "initial guess " << endl << T_key_curr_guess.matrix() << endl;
+      cout << "Frame:" << FrameCount << " :" << endl;
 
-      icp_alignment->alignment(curr_frame->sailent_cloud,
-                               key_frame->cloud,
-                               T_key_curr_guess,
-                               T_key_curr_est,
-                               mean_error,
-                               loop_count,
-                               inlier_count);
+      publishPC(curr_frame->cloud,"pico_flexx_optical_frame",pub_cloudin);
+      publishPC(curr_frame->sailent_cloud,"pico_flexx_optical_frame",pub_sailentpts);
+      findNearestKeyframe();
+      pcl::PointCloud<PointT>::Ptr keyframinworld (new pcl::PointCloud<PointT> ());
+      pcl::transformPointCloud(*key_frame->cloud, *keyframinworld, key_frame->T_wc.cast<float>());
+      publishPC(keyframinworld, "world",pub_keypts);
+
+      Eigen::Affine3d T_key_curr_guess = key_frame->T_cw * prev_frame->T_wc;
+      Eigen::Affine3d T_key_curr_est;
+      double mean_error= 100;
+      int inlier_count = 0;
+      int loop_count = 0;
+
+      if(this->use_conventional_icp)
+      {
+        cout << "use conventional icp (PCL)" << endl;
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloudxyz_curr (new pcl::PointCloud<pcl::PointXYZ>);
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloudxyz_key (new pcl::PointCloud<pcl::PointXYZ>);
+        pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
+        cloudxyz_curr->points.resize(curr_frame->cloud->size());
+        cloudxyz_key->points.resize(key_frame->cloud->size());
+        for (size_t i = 0; i < curr_frame->cloud->points.size(); i++) {
+          cloudxyz_curr->points[i].x = curr_frame->cloud->points[i].x;
+          cloudxyz_curr->points[i].y = curr_frame->cloud->points[i].y;
+          cloudxyz_curr->points[i].z = curr_frame->cloud->points[i].z;
+        }
+        for (size_t i = 0; i < key_frame->cloud->points.size(); i++) {
+          cloudxyz_key->points[i].x = key_frame->cloud->points[i].x;
+          cloudxyz_key->points[i].y = key_frame->cloud->points[i].y;
+          cloudxyz_key->points[i].z = key_frame->cloud->points[i].z;
+        }
+        std::vector<int> indices;
+        cloudxyz_curr->is_dense = false;
+        cloudxyz_key->is_dense = false;
+        pcl::removeNaNFromPointCloud(*cloudxyz_curr, *cloudxyz_curr, indices);
+        pcl::removeNaNFromPointCloud(*cloudxyz_key,  *cloudxyz_key,  indices);
+        icp.setInputSource(cloudxyz_curr);
+        icp.setInputTarget(cloudxyz_key);
+        icp.setMaximumIterations (50);
+        icp.setTransformationEpsilon (1e-8);
+        icp.setMaxCorrespondenceDistance (0.5);
+        icp.setEuclideanFitnessEpsilon (1);
+        icp.setRANSACOutlierRejectionThreshold (1.5);
+        pcl::PointCloud<pcl::PointXYZ> Final;
+        icp.align (Final,T_key_curr_guess.matrix().cast<float>());
+        std::cout << "has converged:" << icp.hasConverged() << endl;
+        mean_error = icp.getFitnessScore();
+        inlier_count = Final.points.size();
+        T_key_curr_est = Eigen::Affine3d(icp.getFinalTransformation().cast<double>());
+        loop_count = 10;
+      }else
+      {
+        icp_alignment->alignment(curr_frame->sailent_cloud,
+                                 key_frame->cloud,
+                                 T_key_curr_guess,
+                                 T_key_curr_est,
+                                 mean_error,
+                                 loop_count,
+                                 inlier_count);
+      }
       cout << "mean error " << mean_error << " with " << loop_count << " loops and contain " << inlier_count << " inliers" << endl;
 
 
-      if(mean_error<0.02 && inlier_count>100)//alignment success
+      //publish_tf(curr_frame->T_cw);
+      if(mean_error<0.1 && inlier_count>200)//alignment success
       {
+
+        curr_frame->T_cw = T_key_curr_est.inverse() * key_frame->T_cw;
+        curr_frame->T_wc = curr_frame->T_cw.inverse();
         if(kf_criteria==1)//distance based criteria
         {
-          if(FrameCount%4==0)
+          if(FrameCount%20==0)
           {
-            cout << "Update the new key Frame" << endl;
+            //cout << "Update the new key Frame" << endl;
             TOF_Frame::copy(*curr_frame,*key_frame);
+            keyframes.push_back(*key_frame);
           }
         }
         if(kf_criteria==2)//distance based criteria
         {
-          curr_frame->T_cw = T_key_curr_est.inverse() * key_frame->T_cw;
-          //key frame switch
           Vector3d r,t;
-          ICP_ALIGNMENT::getAngleandTrans(T_key_curr_est.inverse(),r,t);
+          ICP_ALIGNMENT::getAngleandTrans(T_key_curr_est,r,t);
           double r_norm=fabs(r[0])+fabs(r[1])+fabs(r[2]);
           double t_norm=fabs(t[0])+fabs(t[1])+fabs(t[2]);
-          if(t_norm>0.2)
+          t_norm=t.norm();
+          if(t_norm>0.4)
           {
-            cout << "Update the new key Frame" << endl;
+            //cout << "Update the new key Frame" << endl;
             TOF_Frame::copy(*curr_frame,*key_frame);
+            keyframes.push_back(*key_frame);
           }
         }
-
 
         publish_pose(curr_frame->T_cw , pcPtr->header.stamp );
         publish_tf(curr_frame->T_cw);
@@ -322,6 +396,59 @@ private:
     }
   }
 
+  void findNearestKeyframe(void)
+  {
+    //cout << "Search nearest keyframe:" << endl;
+    Vec3 t_guess = prev_frame->T_wc.translation();
+    size_t min_idx=0;
+    double min_distance=10;
+    //cout << t_guess.transpose() << endl;
+    for(size_t i=0; i<this->keyframes.size(); i++)
+    {
+      Vec3 t_kf = keyframes.at(i).T_wc.translation();
+      Vec3 t_diff = t_guess-t_kf;
+      double dis=t_diff.norm();
+      if(dis<min_distance)
+      {
+        min_distance = dis;
+        min_idx = i;
+      }
+    }
+    //cout << "cloest idx " << min_idx << " with distance" << min_distance << endl;
+    TOF_Frame::copy(keyframes.at(min_idx),*key_frame);
+  }
+
+  inline void visualizeDepthImg(cv::Mat& visualized_depth, cv::Mat d_img_in)
+  {
+    Mat d_img = d_img_in;
+    int size=d_img.cols*d_img.rows;
+    for(int i=0; i<size; i++)
+    {
+      if(isnan(d_img.at<float>(i)))
+      {
+        d_img.at<float>(i)=0;
+      }
+      if(d_img.at<float>(i)>6||d_img.at<float>(i)<0.5)
+      {
+        d_img.at<float>(i)=0;
+      }
+    }
+    cv::Mat adjMap;
+    d_img.convertTo(adjMap,CV_8UC1, (255/6), 0);
+    cv::applyColorMap(adjMap, visualized_depth, cv::COLORMAP_RAINBOW);
+    for(int i=0; i<size; i++)
+    {
+      if(d_img.at<float>(i)==0)
+      {
+        cv::Vec3b color = visualized_depth.at<cv::Vec3b>(i);
+        color[0]=255;
+        color[1]=255;
+        color[2]=255;
+        visualized_depth.at<cv::Vec3b>(i)=color;
+      }
+    }
+  }
+
   void publish_tf(Eigen::Affine3d T_cw)
   {
     Eigen::Affine3d tf_WC = T_cw.inverse();
@@ -349,8 +476,8 @@ private:
     Matrix3d rot     = T_wi.linear();
     Quaterniond q(rot);
     Vec3 euler = euler_from_rotation_matrix(rot);
-//    cout << "Ф:" << std::fixed << euler(0)*57.32 << "  θ:" << euler(1)*57.32 << "  ψ:" << euler(2)*57.32 << " "
-//         << "x:" << translation(0) << "  y:" << translation(1) << "  z:" << translation(2) << endl;
+    //    cout << "Ф:" << std::fixed << euler(0)*57.32 << "  θ:" << euler(1)*57.32 << "  ψ:" << euler(2)*57.32 << " "
+    //         << "x:" << translation(0) << "  y:" << translation(1) << "  z:" << translation(2) << endl;
 
     std_msgs::Float32MultiArray array;
     array.data.clear();

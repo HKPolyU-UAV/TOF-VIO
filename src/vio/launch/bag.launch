@@ -1,0 +1,24 @@
+<launch>
+
+    <include file="$(find vio)/launch/vio.launch"/>
+
+    <node pkg="vio" type="gt_publisher" name="gt" output="log">
+        <remap from="/gt/vicon" to="/gt"/>
+    </node>
+
+<!--    <node pkg="vio" type="topic2file" name="odomfile" output="log">
+        <remap from="~odom"        to="/ICP_Node/icp_odom"/>
+        <param name="filepath"     type="string"  value="$(find vio)/result/Estimated.txt"/>
+    </node>
+    <node pkg="vio" type="topic2file" name="gtfile" output="log">
+        <remap from="~odom"        to="/gt/odom_gt"/>
+        <param name="filepath"     type="string"  value="$(find vio)/result/Ground Truth.txt"/>
+    </node>-->
+
+
+    <node pkg="rosbag" type="play" name="rosbag" args="$(find vio)/bag/handheld.bag"/>
+<!--    <node pkg="rosbag" type="play" name="rosbag" args="$(find vio)/bag/lab.bag"/>
+    <node pkg="rosbag" type="play" name="rosbag" args="$(find vio)/bag/corridor.bag"/>-->
+
+</launch>
+

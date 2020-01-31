@@ -4,8 +4,8 @@ project(vio)
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -O3 -Wall -pthread") # -Wextra -Werror
 set(CMAKE_BUILD_TYPE "RELEASE")
 
-find_package(OpenCV REQUIRED)
-
+find_package (OpenCV 3 REQUIRED)
+find_package (Eigen3 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
     nodelet
     roscpp
@@ -17,28 +17,27 @@ find_package(catkin REQUIRED COMPONENTS
     pcl_ros
     cv_bridge
     message_generation
+    image_transport
+    tf
     )
-find_package(OpenCV 3 REQUIRED)
 
-#add_message_files(
-#    FILES
-#    )
-
-generate_messages(
-    DEPENDENCIES
-    std_msgs
-    )
 
 ## Declare a catkin package
 catkin_package(
-    CATKIN_DEPENDS message_runtime
+    CATKIN_DEPENDS
+    message_runtime
+    sensor_msgs
+    cv_bridge
+    roscpp
+    std_msgs
+    image_transport
     )
-
 
 
 include_directories(SYSTEM
     ${catkin_INCLUDE_DIRS}
     ${PCL_INCLUDE_DIRS}
+    ${OpenCV_INCLUDE_DIRS}
     "${CMAKE_CURRENT_SOURCE_DIR}/src/"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/include/"
     )
@@ -50,30 +49,37 @@ add_library(nodelet_icp
     src/vo/icp.cpp
     src/vo/tof_frame.cpp
     )
-target_link_libraries(nodelet_icp ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+target_link_libraries(nodelet_icp
+    ${catkin_LIBRARIES}
+    ${OpenCV_LIBRARIES})
 ##################################################################################
 add_executable(ekf
     src/ekf/node_ekf.cpp
     src/ekf/ekf_model.cpp
     )
-target_link_libraries(ekf ${catkin_LIBRARIES} )
+target_link_libraries(ekf
+    ${catkin_LIBRARIES} )
 ##################################################################################
 add_executable(eskf
     src/eskf/node_eskf.cpp
     src/eskf/eskf_imu.cpp
     )
-target_link_libraries(eskf ${catkin_LIBRARIES} )
+target_link_libraries(eskf
+    ${catkin_LIBRARIES} )
 ##################################################################################
 add_executable(gt_publisher
     src/tools/node_gt_publisher.cpp
     )
-target_link_libraries(gt_publisher ${catkin_LIBRARIES})
+target_link_libraries(gt_publisher
+    ${catkin_LIBRARIES})
 ##################################################################################
 add_executable(topic2file
     src/tools/node_odomtopic2file.cpp
     )
-target_link_libraries(topic2file ${catkin_LIBRARIES})
+target_link_libraries(topic2file
+    ${catkin_LIBRARIES})
 ##################################################################################
+
 
 
 

@@ -282,8 +282,8 @@ void ICP_ALIGNMENT::icp_single_loop(bool   use_robust_kernel,
   double sum_trans = fabs(trans(0))+fabs(trans(1))+fabs(trans(2));
   if(sum_euler<0.005 && sum_trans<0.0005)
   {
-    cout << "converge with small change in increTrans with "
-         << "angle: " << sum_euler << " translation: " << sum_trans << endl;
+//    cout << "converge with small change in increTrans with "
+//         << "angle: " << sum_euler << " translation: " << sum_trans << endl;
     converged = 1;
     return;
   }

@@ -1,14 +1,16 @@
 <launch>
-<!--################################################################################################-->
-    <node name="rosbag" pkg="rosbag" type="play" args="$(find vio)/bag/uav.bag" />
-<!--################################################################################################-->
     <node pkg="nodelet" type="nodelet" name="ICP_Node" args="standalone nodelet_ns/NICP" output="screen">
-        <remap from="/vicon" to="/gt"/>
-        <remap from="/mavros/imu/data" to="/imu"/>
-        <remap from="/NICP/out" to="remapped_output"/>
+
+        <remap from="/input_gt"         to="/gt"/>
+        <remap from="/input_imu"        to="/imu"/>
+        <remap from="/input_tof_pc"     to="/points"/>
+        <remap from="/input_tof_nir"    to="/image_nir"/>
+        <remap from="/input_tof_depth"  to="/image_depth"/>
+
+        <remap from="/NICP/out"         to="remapped_output"/>
         <param name="cam_cal_file" type="string" value="$(find vio)/config/flexx.yml"/>
         <param name="icp/sailentpts_sample_count"     type="int"  value="15000"/>
-        <param name="icp/target_sailentpts_num"       type="int"  value="500"/>
+        <param name="icp/target_sailentpts_num"       type="int"  value="600"/>
         <param name="icp/use_depth_grad"              type="int" value="1"/>
         <param name="icp/use_intensity_grad"          type="int" value="1"/>
         <param name="icp/use_edge_detector"           type="int" value="0"/>
@@ -19,15 +21,17 @@
         <param name="icp/sh_edge"                     type="double" value="0.015"/>
         <!-- Init Pose with Motion Capture system data -->
         <param name="icp/init_by_MC"           type="int" value="1"/>
+
         <!-- Init Pose init at the center (0,0,0) with the IMU orientation-->
         <param name="icp/init_by_IMU"          type="int" value="0"/>
+
         <!-- kf_criteria 0:use_1st_frame 1:frame count based 2:distance based-->
-        <param name="icp/kf_criteria"          type="int" value="0"/>
+        <param name="icp/kf_criteria"          type="int" value="2"/>
+
+        <!-- use conventional pipeline-->
+        <param name="icp/use_conventional_icp" type="bool" value="false"/>
     </node>
-<!--################################################################################################-->
-    <node pkg="vio" type="gt_publisher" name="gt" output="log">
-        <remap from="/gt/vicon" to="/gt"/>
-    </node>
+
 <!--################################################################################################-->
 <!--    <node pkg="vio" type="eskf" name="eskf" output="screen">
         <remap from="~imu"        to="/imu"/>
@@ -52,16 +56,6 @@
         <param name="ekf/vo_p"    type="double" value="0.02"/>
         <param name="ekf/vo_q"    type="double" value="0.02"/>
     </node>-->
-<!--################################################################################################-->
-    <node pkg="vio" type="topic2file" name="topic2file1" output="log">
-        <remap from="~odom"        to="/ICP_Node/icp_odom"/>
-        <param name="filepath"     type="string"  value="$(find vio)/result/Estimated.txt"/>
-    </node>
-<!--################################################################################################-->
-    <node pkg="vio" type="topic2file" name="topic2file2" output="log">
-        <remap from="~odom"        to="/gt/odom_gt"/>
-        <param name="filepath"     type="string"  value="$(find vio)/result/Ground Truth.txt"/>
-    </node>
 <!--################################################################################################-->
 </launch>
 
