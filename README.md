@@ -7,23 +7,25 @@ TOF Camera Visual Initial Odometry
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/IqfIqArsWXA/0.jpg)](https://www.youtube.com/watch?v=IqfIqArsWXA)
 
 **Related Papers:**
+### Introduction: 
 
 ### Prerequisites
+Ubuntu + ROS We have tested in the following environment:<br />
+Ubuntu 16.04 + [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu)<br />
+Ubuntu 18.04 + [ROS melodic](http://wiki.ros.org/melodic/Installation/Ubuntu)<br />
 
-Ubuntu 16.04
-
-[ROS Kinetic](http://wiki.ros.org/ROS/Installation)
-
-For the experiment platform(optional)
-PIXHAWK IMU:
-mavros installation
+### Build and Run
+Clone the repository to the catkin work space eg. /catkin_ws/src
 ```
-    sudo apt-get install ros-kinetic-mavros ros-kinetic-mavros-msgs ros-kinetic-mavros-extras 
+cd ~/catkin_ws/src
+git clone https://github.com/HKPolyU-UAV/TOF-VIO.git
 ```
-PMD Flexx TOF-CAMERA:
-get [drivers](https://pmdtec.com/picofamily/software/) from the PMD website and install [ros wrapper](https://github.com/code-iai/pico_flexx_driver)
-
-### Dataset
+Compile
+```
+cd ~/catkin_ws
+catkin_make
+```
+### Verify using Dataset
 Using our recorded rosbag:
 
 ->[Link1](https://drive.google.com/open?id=1gXFkPzBxnanjrGOZI8xY8oLMl_iN59x7) Hand Held Test 
@@ -51,18 +53,18 @@ Camera matrix and distortion coeffs of the Depth/NIR image
 | cy            | 87.125724 | p2                | 0       |
 |               |           | p3                | 10.0098 |
 
-### Build and Run
+Place the .bag file into bag folder then modify the bag.launch file 
+```
+<node pkg="rosbag" type="play" name="rosbag" args="$(find vio)/bag/nameofthebag.bag"/>
+```
+Run: <br />
+```
+roslaunch vio rviz.launch
+```
+```
+roslaunch vio bag.launch
+```
 
-Build
-```
-catkin_make
-```
-
-Run
-```
-source catkin_ws/devel/setup.bash 
-roslaunch vio vio.launch
-```
 ### Evaluation 
 TUM scripts can be used to evaluate the result, the following are the exported of rosbag result:
 
@@ -73,4 +75,13 @@ Handheld test
 UAV test
 
 <img src="files/UAV.png" width="300">
+
+
+### Tips for making own experiment platform
+We can use light-weight PMD Flexx TOF-CAMERA: get [drivers](https://pmdtec.com/picofamily/software/) from the PMD website and install [ros wrapper](https://github.com/code-iai/pico_flexx_driver)
+You can use a pixhawk as an IMU with [mavros](http://wiki.ros.org/mavros)
+
+### Maintainer:
+[Shengyang Chen](https://www.polyu.edu.hk/researchgrp/cywen/index.php/en/people/researchstudent.html)(Dept.ME,PolyU): shengyang.chen@connect.polyu.hk <br />
+
 
