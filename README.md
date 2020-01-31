@@ -28,9 +28,12 @@ catkin_make
 ### Verify using Dataset
 Using our recorded rosbag:
 
-->[Link1](https://drive.google.com/open?id=1gXFkPzBxnanjrGOZI8xY8oLMl_iN59x7) Hand Held Test 
+->[Link1](https://drive.google.com/open?id=1-mdz7wl5JyhxFYr9SoeClK4WtimJQYd_) Hand held test 
 
-->[Link2](https://drive.google.com/open?id=166c4uA-JcDmmv29gMVxA2dJYKM28NJaI) UAV Test(Changing of environment lighting condition)
+->[Link2](https://drive.google.com/open?id=1MgEL9vWcRwh5zFwe1Vh7nNjQmszu9h3I) Lab test(Changing of environment lighting condition)
+
+->[Link3](https://drive.google.com/open?id=1eQtt0zhSFPT5nYd5PYAoZZP8JioHqfxa) UAV fly in corridor
+
 The rosbag is [compressed](http://wiki.ros.org/rosbag/Commandline#compress), [depressed](http://wiki.ros.org/rosbag/Commandline#decompress) it before estimation.
 
 Data Format of the rosbag
@@ -38,7 +41,7 @@ Data Format of the rosbag
 |   Topic Name  |             Content            | Frequency |
 |:-------------:|:------------------------------:|:---------:|
 | /image\_depth | Depth image (u,v,z)            |     15    |
-| /image\_mono8 | NIR image (u,v,i)              |     15    |
+| /image\_nir   | NIR image (u,v,i)              |     15    |
 | /points       | Organized point cloud          |     15    |
 | /imu          | IMU data                       |    250    |
 | /gt           | Ground truth captured by Vicon |     50    |
