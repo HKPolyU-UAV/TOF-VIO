@@ -30,6 +30,24 @@ SalientPts::SalientPts(int pc_width_in,
   sh_edge = sh_edge_in;
 }
 
+void SalientPts::select_random_from_pc(CloudTPtr &salient_pc, CloudTPtr pc, const Mat &i_img)
+{
+    salient_pc->clear();
+    int sailentpts_cnt = 0;
+    for(int sample_count=0; (sailentpts_cnt<min_pts_num && sample_count<5000) ; sample_count++)//sample 5000
+    {
+      int u=rand()%(pc_width-6)+3;
+      int v=rand()%(pc_height-6)+3;
+      PointT pt = pc->at(u+v*pc_width);
+      if(pt.z==pt.z)//valid pts
+      {
+        sailentpts_cnt++;
+        salient_pc->push_back(pt);
+        continue;
+      }
+    }
+}
+
 void SalientPts::select_salient_from_pc(CloudTPtr& salient_pc, CloudTPtr pc, const Mat& i_img )
 {
   salient_pc->clear();
@@ -137,12 +155,12 @@ void SalientPts::select_salient_from_pc(CloudTPtr& salient_pc, CloudTPtr pc, con
       }//valid pts
     }
   }
-  //cout << inputpts_cnt << endl;
+  //cout << inputpts_cnt << ","<< sailentpts_cnt << endl;
   //cout << sailentpts_cnt << endl;
   if(sailentpts_cnt < min_pts_num)
   {
     //cout << sailentpts_cnt << endl;
-    cout << "sailentpts_cnt "<< sailentpts_cnt << " less than " << min_pts_num  << ", add random pts to ";
+    //cout << "sailentpts_cnt "<< sailentpts_cnt << " less than " << min_pts_num  << ", add random pts to ";
     for(int sample_count=0; (sailentpts_cnt<min_pts_num && sample_count<5000) ; sample_count++)//sample 5000
     {
       int u=rand()%(pc_width-6)+3;
@@ -155,6 +173,6 @@ void SalientPts::select_salient_from_pc(CloudTPtr& salient_pc, CloudTPtr pc, con
         continue;
       }
     }
-    cout << sailentpts_cnt << endl;
+     //cout << sailentpts_cnt << endl;
   }
 }

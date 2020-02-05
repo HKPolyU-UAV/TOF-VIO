@@ -16,6 +16,11 @@ typedef pcl::PointCloud<PointT> CloudT;
 typedef CloudT::Ptr CloudTPtr;
 typedef CloudT::ConstPtr CloudTConstPtr;
 
+typedef pcl::PointXYZ PointXZY;
+typedef pcl::PointCloud<PointXZY> CloudXYZ;
+typedef CloudXYZ::Ptr CloudXYZPtr;
+typedef CloudXYZ::ConstPtr CloudXYZConstPtr;
+
 typedef Eigen::Matrix<double, 3, 1> Vec3;
 typedef Eigen::Matrix<double, 4, 1> Vec4;
 typedef Eigen::Matrix<double, 6, 1> Vec6;

@@ -1,0 +1,8 @@
+<launch>
+
+    <include file="$(find tof_vio)/launch/vio_platform/flexx.launch"/>
+    <include file="$(find tof_vio)/launch/vio_platform/px4.launch"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="worldandmap" args="0 0 0 0 0 0 1 world map 100"/>
+
+</launch>

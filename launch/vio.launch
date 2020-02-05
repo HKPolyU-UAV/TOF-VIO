@@ -6,11 +6,30 @@
         <remap from="/input_tof_pc"     to="/points"/>
         <remap from="/input_tof_nir"    to="/image_nir"/>
         <remap from="/input_tof_depth"  to="/image_depth"/>
-
         <remap from="/NICP/out"         to="remapped_output"/>
-        <param name="cam_cal_file" type="string" value="$(find vio)/config/flexx.yml"/>
+        <!-- use other pipeline
+        0:proposed method
+        1:ICP+RANSAC
+        2:Others
+        -->
+        <param name="icp/use_other_icp"             type="int" value="0"/>
+        <param name="icp/use_orig_pts"              type="bool" value="false"/>
+        <param name="icp/use_ransomdownsample_pts"  type="bool" value="true"/>
+        <param name="icp/use_salient_pts"           type="bool" value="false"/>
+        <param name="icp/use_robust_w"              type="bool" value="true"/>
+
+        <!-- run in vo mode with out imu -->
+        <param name="icp/vo_mode"               type="bool" value="false"/>
+        <!-- Init Pose with Motion Capture system data -->
+        <param name="icp/init_by_MC"           type="bool" value="true"/>
+        <!-- Init Pose init at the center (0,0,0) with the IMU orientation-->
+        <param name="icp/init_by_IMU"          type="bool" value="false"/>
+        <!-- kf_criteria 0:use_1st_frame 1:frame count based 2:distance based-->
+        <param name="icp/kf_criteria"          type="int" value="2"/>
+
+        <param name="cam_cal_file" type="string" value="$(find tof_vio)/config/flexx.yml"/>
         <param name="icp/sailentpts_sample_count"     type="int"  value="15000"/>
-        <param name="icp/target_sailentpts_num"       type="int"  value="600"/>
+        <param name="icp/target_sailentpts_num"       type="int"  value="500"/>
         <param name="icp/use_depth_grad"              type="int" value="1"/>
         <param name="icp/use_intensity_grad"          type="int" value="1"/>
         <param name="icp/use_edge_detector"           type="int" value="0"/>
@@ -19,21 +38,11 @@
         <param name="icp/sh_depth"                    type="double" value="0.07"/>
         <param name="icp/sh_grey"                     type="double" value="100"/>
         <param name="icp/sh_edge"                     type="double" value="0.015"/>
-        <!-- Init Pose with Motion Capture system data -->
-        <param name="icp/init_by_MC"           type="int" value="1"/>
 
-        <!-- Init Pose init at the center (0,0,0) with the IMU orientation-->
-        <param name="icp/init_by_IMU"          type="int" value="0"/>
-
-        <!-- kf_criteria 0:use_1st_frame 1:frame count based 2:distance based-->
-        <param name="icp/kf_criteria"          type="int" value="2"/>
-
-        <!-- use conventional pipeline-->
-        <param name="icp/use_conventional_icp" type="bool" value="false"/>
     </node>
 
 <!--################################################################################################-->
-<!--    <node pkg="vio" type="eskf" name="eskf" output="screen">
+    <node pkg="tof_vio" type="eskf" name="eskf" output="screen">
         <remap from="~imu"        to="/imu"/>
         <remap from="~vo"         to="/gt/odom_gt"/>
         <param name="eskf/ng"          type="double"  value="10"/>
@@ -43,9 +52,9 @@
         <param name="eskf/vo_p"        type="double" value="0.1"/>
         <param name="eskf/vo_q"        type="double" value="0.1"/>
         <param name="eskf/vo_delay_ms"    type="double" value="0"/>
-   </node>-->
+   </node>
 <!--################################################################################################-->
-<!--    <node pkg="vio" type="ekf" name="ekf" output="log">
+<!--    <node pkg="tof_vio" type="ekf" name="ekf" output="log">
         <remap from="~imu"        to="/imu"/>
         <remap from="~vo"         to="/gt/odom_gt"/>
 

@@ -36,6 +36,7 @@ public:
                float sh_background_in,
                float sh_edge_in);
     void select_salient_from_pc(CloudTPtr& salient_pc, CloudTPtr pc, const Mat& i_img );
+    void select_random_from_pc(CloudTPtr& salient_pc, CloudTPtr pc, const Mat& i_img);
 };
 
 #endif // SALIENTPTS_H
