@@ -8,7 +8,7 @@
 
     <node pkg="tof_vio" type="topic2file" name="odomfile" output="log">
         <remap from="~odom"        to="/icp_odom"/>
-        <param name="filepath"     type="string"  value="$(find tof_vio)/result/icp+rd.txt"/>
+        <param name="filepath"     type="string"  value="$(find tof_vio)/result/icp+text.txt"/>
     </node>
     <node pkg="tof_vio" type="topic2file" name="gtfile" output="log">
         <remap from="~odom"        to="/gt/odom_gt"/>
@@ -17,7 +17,10 @@
 
 
     <node pkg="rosbag" type="play" name="rosbag" args="$(find tof_vio)/bag/handheld.bag"/>
-    <!--<node pkg="rosbag" type="play" name="rosbag" args="$(find tof_vio)/bag/lab.bag"/>-->
+    <!--<node pkg="rosbag" type="play" name="rosbag" args="$(find tof_vio)/bag/lab.bag -s9"/>-->
+    <!--<node pkg="rosbag" type="play" name="rosbag" args="$(find tof_vio)/bag/fj005.bag -s3"/>-->
+    <!--<node pkg="rosbag" type="play" name="rosbag" args="$(find tof_vio)/bag/2020-02-07-23-23-03.bag"/>-->
+
     <!--<node pkg="rosbag" type="play" name="rosbag" args="$(find tof_vio)/bag/corridor.bag"/>-->
 
 </launch>

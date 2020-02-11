@@ -7,7 +7,19 @@ plugin_blacklist:
 - distance_sensor
 - rangefinder
 - wheel_odometry
-
+- fake_gps
+- debug_value
+- global_position
+- hil
+- local_position
+- px4flow
+- rc
+- setpoint_raw
+- setpoint_position
+- setpoint_accel
+- setpoint_trajectory
+- mission
+- home_position
 
 plugin_whitelist: []
 #- 'sys_*'

@@ -5,7 +5,7 @@
   <!-- ID of the sensor that should be used. IDs of all connected devices are listed on startup. -->
   <arg name="sensor"             default=""/>
   <!-- ID of the use case. A list of supported use cases is listed on startup. -->
-  <arg name="use_case"           default="0"/>
+  <arg name="use_case"           default="1"/>
   <!-- Enable or disable automatic expusure. -->
   <arg name="automatic_exposure" default="true"/>
   <!-- Exposure time. Only for manual exposure. -->
@@ -46,12 +46,12 @@
 
   <!-- Nodelet manager. -->
   <node pkg="nodelet" type="nodelet" name="$(arg nodelet_manager)" args="manager"
-        if="$(arg start_manager)" machine="$(arg machine)" output="screen"/>
+        if="$(arg start_manager)" machine="$(arg machine)" output="log"/>
 
   <!-- pico_flexx_driver nodelet. -->
   <node pkg="nodelet" type="nodelet" name="$(arg base_name)_driver" machine="$(arg machine)"
         args="load pico_flexx_driver/pico_flexx_nodelet $(arg nodelet_manager) pico_flexx/points:=/points pico_flexx/image_depth:=/image_depth pico_flexx/image_mono8:=/image_nir "
-        respawn="true" output="screen">
+        respawn="true" output="log">
     <param name="base_name"          type="str"    value="$(arg base_name)"/>
     <param name="sensor"             type="str"    value="$(arg sensor)"/>
     <param name="use_case"           type="int"    value="$(arg use_case)"/>

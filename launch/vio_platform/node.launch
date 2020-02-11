@@ -8,7 +8,7 @@
 	<arg name="tgt_component" />
 	<arg name="pluginlists_yaml" />
 	<arg name="config_yaml" />
-	<arg name="log_output" default="screen" />
+        <arg name="log_output" default="screen" />
 	<arg name="fcu_protocol" default="v2.0" />
 	<arg name="respawn_mavros" default="false" />
 
