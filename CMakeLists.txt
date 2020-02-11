@@ -79,7 +79,12 @@ add_executable(topic2file
 target_link_libraries(topic2file
     ${catkin_LIBRARIES})
 ##################################################################################
-
+add_executable(odom2posestamp
+    src/tools/node_odom2posestamp.cpp
+    )
+target_link_libraries(odom2posestamp
+    ${catkin_LIBRARIES})
+##################################################################################
 
 
 
