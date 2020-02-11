@@ -2,9 +2,17 @@
 
 TOF Camera Visual Initial Odometry
 
-**Videos:**
+**Video:**
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/IqfIqArsWXA/0.jpg)](https://www.youtube.com/watch?v=IqfIqArsWXA)
+[![](https://i.imgur.com/IqfIqArsWXA.png)](https://youtu.be/IqfIqArsWXA)
+
+Perception in the Dark
+
+<img src="files/indark.gif" width="300">
+
+Test in Lab on a Moving Platform
+
+<img src="files/fj005.gif" width="300"> 
 
 **Related Papers:**
 ### Introduction: 
