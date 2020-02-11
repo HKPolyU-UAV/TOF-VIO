@@ -4,7 +4,8 @@ TOF Camera Visual Initial Odometry
 
 **Video:**
 
-[![](https://i.imgur.com/IqfIqArsWXA.png)](https://youtu.be/IqfIqArsWXA)
+<a href="https://www.youtube.com/embed/IqfIqArsWXA" target="_blank"><img src="http://img.youtube.com/vi/IqfIqArsWXA/0.jpg" 
+alt="cla" width="360" height="230" border="10" /></a>
 
 Perception in the Dark
 
