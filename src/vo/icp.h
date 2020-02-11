@@ -55,7 +55,8 @@ public:
                    Eigen::Affine3d &T_ts_out,
                    double          &mean_dis_error,
                    int             &loop_count_out,
-                   int             &inlier_count_out
+                   int             &inlier_count_out,
+                   bool            output_info
                    );
     static void getAngleandTrans(Eigen::Affine3d tf,
                                  Vector3d& angle,
@@ -65,7 +66,6 @@ public:
 private:
     //single ICP loop
     void icp_single_loop(bool   use_robust_kernel,
-                         bool   remove_outlier,
                          int    &converged,
                          double &mean_dis
                          );
@@ -75,7 +75,6 @@ private:
                    int             nns_radius,
                    double          sh_distance,
                    bool            use_robust_kernel,
-                   bool            remove_outlier,
                    int             &converged_flag,
                    double          &mean_dis_out,
                    int             &loop_count_out,

@@ -3,6 +3,7 @@
 
 #include <common.h>
 #include <opencv2/opencv.hpp>
+#include <include/tic_toc_ros.h>
 
 using namespace cv;
 using namespace std;

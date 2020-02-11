@@ -203,7 +203,7 @@ private:
         // -1  0  0  0
         //  0 -1  0  0.01
         //  0  0  0  1
-        T_ic.matrix() <<  0, 0, 1, 0.1,
+        T_ic.matrix() <<  0, 0, 1, 0.03,
                 -1, 0, 0,   0,
                 0,-1, 0,0.01,
                 0, 0, 0,   1;
@@ -243,23 +243,22 @@ private:
     {
         //tic_toc_ros tt_cb;
         FrameCount++;
-        curr_frame->read_PC_Iimg_FromROSMsg(pcPtr,mono8Ptr);
         Mat dimg = cv_bridge::toCvCopy(depthPtr,  depthPtr->encoding)->image;
         Mat colored_dimg;
         visualizeDepthImg(colored_dimg,dimg);
         sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", colored_dimg).toImageMsg();
         pub_colored_dimg.publish(msg);
-
-        if(icp_init) findNearestKeyframe();
+        //if(icp_init) findNearestKeyframe();
 
         tic_toc_ros tt_cnt;
+        curr_frame->read_PC_Iimg_FromROSMsg(pcPtr,mono8Ptr);
         if(use_orig_pts)
             curr_frame->sailent_cloud = curr_frame->cloud;
         if(use_salient_pts)
             salient_pts_extractor->select_salient_from_pc(curr_frame->sailent_cloud,curr_frame->cloud,curr_frame->i_img);
         if(use_ransomdownsample_pts)
             salient_pts_extractor->select_random_from_pc(curr_frame->sailent_cloud,curr_frame->cloud,curr_frame->i_img);
-
+        //cout << tt_cnt.dT_ms() << endl;
         if(!icp_init)//first time
         {
             if((receive_mc_data && init_by_MC)||(receive_imu_data && init_by_IMU)||vo_mode)
@@ -349,31 +348,32 @@ private:
                     loop_count = 10;
                 }if(use_other_icp==2)
                 {
-//                    cout << "use Normal Distribution Based  (PCL)" << endl;
-//                    // Initializing Normal Distributions Transform (NDT).
-//                    pcl::NormalDistributionsTransform<pcl::PointXYZ, pcl::PointXYZ> ndt;
-//                    ndt.setTransformationEpsilon (0.001);
-//                    // Setting maximum step size for More-Thuente line search.
-//                    ndt.setStepSize (0.1);
-//                    //Setting Resolution of NDT grid structure (VoxelGridCovariance).
-//                    ndt.setResolution (0.05);
-//                    // Setting max number of registration iterations.
-//                    ndt.setMaximumIterations (20);
-//                    // Setting point cloud to be aligned.
-//                    ndt.setInputSource (cloudxyz_curr);
-//                    // Setting point cloud to be aligned to.
-//                    ndt.setInputTarget (cloudxyz_key);
-//                    pcl::PointCloud<pcl::PointXYZ> Final;
-//                    ndt.align (Final,T_key_curr_guess.matrix().cast<float>());
-//                    std::cout << "has converged:" << ndt.hasConverged() << endl;
-//                    mean_error = ndt.getFitnessScore();
-//                    inlier_count = Final.points.size();
-//                    T_key_curr_est = Eigen::Affine3d(icp.getFinalTransformation().cast<double>());
-//                    loop_count = 10;
+                    //                    cout << "use Normal Distribution Based  (PCL)" << endl;
+                    //                    // Initializing Normal Distributions Transform (NDT).
+                    //                    pcl::NormalDistributionsTransform<pcl::PointXYZ, pcl::PointXYZ> ndt;
+                    //                    ndt.setTransformationEpsilon (0.001);
+                    //                    // Setting maximum step size for More-Thuente line search.
+                    //                    ndt.setStepSize (0.1);
+                    //                    //Setting Resolution of NDT grid structure (VoxelGridCovariance).
+                    //                    ndt.setResolution (0.05);
+                    //                    // Setting max number of registration iterations.
+                    //                    ndt.setMaximumIterations (20);
+                    //                    // Setting point cloud to be aligned.
+                    //                    ndt.setInputSource (cloudxyz_curr);
+                    //                    // Setting point cloud to be aligned to.
+                    //                    ndt.setInputTarget (cloudxyz_key);
+                    //                    pcl::PointCloud<pcl::PointXYZ> Final;
+                    //                    ndt.align (Final,T_key_curr_guess.matrix().cast<float>());
+                    //                    std::cout << "has converged:" << ndt.hasConverged() << endl;
+                    //                    mean_error = ndt.getFitnessScore();
+                    //                    inlier_count = Final.points.size();
+                    //                    T_key_curr_est = Eigen::Affine3d(icp.getFinalTransformation().cast<double>());
+                    //                    loop_count = 10;
                 }
 
             }else
             {
+
                 icp_alignment->alignment(curr_frame->sailent_cloud,
                                          key_frame->cloud,
                                          use_robust_w,
@@ -381,17 +381,18 @@ private:
                                          T_key_curr_est,
                                          mean_error,
                                          loop_count,
-                                         inlier_count);
-                //cout << endl;
+                                         inlier_count,
+                                         false);
+
+
             }
 
             time_sum+=tt_cnt.dT_ms();
-            cout << "mean error " << mean_error << " with " << loop_count << " loops and contain " << inlier_count << " inliers" << endl;
-            cout << "average processing time" << time_sum/((double)FrameCount) << endl;
+            //cout << "mean error " << mean_error << " with " << loop_count << " loops and contain " << inlier_count << " inliers" << endl;
+            //cout << "average processing time" << time_sum/((double)FrameCount) << endl;
             //publish_tf(curr_frame->T_cw);
-            if(mean_error<0.1)//alignment success
+            if(mean_error<0.1 && inlier_count>200)//alignment success
             {
-
                 curr_frame->T_cw = T_key_curr_est.inverse() * key_frame->T_cw;
                 curr_frame->T_wc = curr_frame->T_cw.inverse();
                 if(kf_criteria==1)//distance based criteria
@@ -406,18 +407,25 @@ private:
                 }
                 if(kf_criteria==2)//distance based criteria
                 {
-                    Vector3d r,t;
-                    ICP_ALIGNMENT::getAngleandTrans(T_key_curr_est,r,t);
-                    double r_norm=fabs(r[0])+fabs(r[1])+fabs(r[2]);
-                    double t_norm=fabs(t[0])+fabs(t[1])+fabs(t[2]);
-                    t_norm=t.norm();
-                    if(t_norm>0.3)
+                    Vector3d r_curr,t_curr,r_key,t_key;
+                    Vector3d r_diff,t_diff;
+                    ICP_ALIGNMENT::getAngleandTrans(curr_frame->T_wc*this->T_ci,r_curr,t_curr);
+                    ICP_ALIGNMENT::getAngleandTrans(key_frame->T_wc*this->T_ci,r_key,t_key);
+                    t_diff = t_curr-t_key;
+                    r_diff = r_curr-r_key;
+                    double r_norm=fabs(r_diff[0]+r_diff[1]+r_diff[2]);
+                    double t_norm=t_diff.norm();
+                    if(t_norm>0.3 || r_norm>0.2)
                     {
                         //cout << "Update the new key Frame" << endl;
                         TOF_Frame::copy(*curr_frame,*key_frame);
                         keyframes.push_back(*key_frame);
                         addFrameToMap(key_frame);
                     }
+                    ICP_ALIGNMENT::getAngleandTrans(curr_frame->T_wc*this->T_ci,r_curr,t_curr);
+                    //                    cout << "r:" << r_curr[0]*57
+                    //                         << " p:" << r_curr[1]*57
+                    //                         << " y:" <<  r_curr[2]*57 << endl;
                 }
 
                 publish_pose(curr_frame->T_cw , pcPtr->header.stamp );
@@ -454,6 +462,7 @@ private:
             T_cw_init = T_cw_gt_last;
             receive_mc_data = 1;
         }
+        T_cw_init = T_cw_gt_last;
     }
 
     void imu_callback(const sensor_msgs::ImuConstPtr& msg)
@@ -477,21 +486,32 @@ private:
         //cout << "Search nearest keyframe:" << endl;
         Vec3 t_guess = prev_frame->T_wc.translation();
         size_t min_idx=0;
-        double min_distance=10;
-        //cout << t_guess.transpose() << endl;
+        double min_rtnome=10;
+
+        Vector3d r_prev,t_prev,r_key,t_key;
+        Vector3d r_diff,t_diff;
+        ICP_ALIGNMENT::getAngleandTrans(prev_frame->T_wc*this->T_ci,r_prev,t_prev);
         for(size_t i=0; i<this->keyframes.size(); i++)
         {
-            Vec3 t_kf = keyframes.at(i).T_wc.translation();
-            Vec3 t_diff = t_guess-t_kf;
-            double dis=t_diff.norm();
-            if(dis<min_distance)
+            ICP_ALIGNMENT::getAngleandTrans(keyframes.at(i).T_wc*this->T_ci,r_key,t_key);
+            t_diff = t_prev-t_key;
+            r_diff = r_prev-r_key;
+            double r_norm=fabs(r_diff[0])+fabs(r_diff[1])+fabs(r_diff[2]);
+
+            //cout << "r_nome" << r_norm << endl;
+            double t_norm=t_diff.norm();
+            if(r_norm<0.15)
             {
-                min_distance = dis;
-                min_idx = i;
+                if(t_norm<min_rtnome)
+                {
+                    min_rtnome = t_norm;
+                    min_idx = i;
+                    TOF_Frame::copy(keyframes.at(min_idx),*key_frame);
+                }
             }
         }
         //cout << "cloest idx " << min_idx << " with distance" << min_distance << endl;
-        TOF_Frame::copy(keyframes.at(min_idx),*key_frame);
+        //TOF_Frame::copy(keyframes.at(min_idx),*key_frame);
     }
 
     void addFrameToMap(TOF_Frame::Ptr frame)
@@ -511,7 +531,7 @@ private:
         *mapcloud += *pc_in_world;
         pcl::VoxelGrid<PointT> sor;
         sor.setInputCloud (mapcloud);
-        sor.setLeafSize (0.02f, 0.02f, 0.02f);
+        sor.setLeafSize (0.08f, 0.08f, 0.08f);
         sor.filter (*mapcloud);
     }
 

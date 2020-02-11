@@ -155,7 +155,7 @@ void SalientPts::select_salient_from_pc(CloudTPtr& salient_pc, CloudTPtr pc, con
       }//valid pts
     }
   }
-  //cout << inputpts_cnt << ","<< sailentpts_cnt << endl;
+  //cout << inputpts_cnt << ","<< sailentpts_cnt << ",";
   //cout << sailentpts_cnt << endl;
   if(sailentpts_cnt < min_pts_num)
   {
