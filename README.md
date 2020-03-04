@@ -3,9 +3,9 @@ ToF Camera Visual Initial Odometry
 ### Video:
 <a href="https://www.youtube.com/embed/IqfIqArsWXA" target="_blank"><img src="http://img.youtube.com/vi/IqfIqArsWXA/0.jpg" 
 alt="cla" width="290" height="184" border="10" /></a>
-| Perception in the Dark  | Explore the Lab |
+| Changing Ambient Light Test  | Exploration Test |
 | ------------- | ------------- |
-| <img src="files/indark.gif" width="200">  | <img src="files/fj005.gif" width="200">  |
+| <img src="files/indark.gif" width="300">  | <img src="files/fj005.gif" width="300">  |
 ### Relevant publications:
 Chen, S., Chang, C.-W., & Wen, C.-Y. (2020). Perception in the Dark—Development of a ToF Visual Inertial Odometry System. Sensors, 20(5), 1263. doi: 10.3390/s20051263
 ### Introduction: 
