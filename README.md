@@ -1,30 +1,19 @@
 # TOF-VIO
-
-TOF Camera Visual Initial Odometry
-
+ToF Camera Visual Initial Odometry
 ### Video:
-
 <a href="https://www.youtube.com/embed/IqfIqArsWXA" target="_blank"><img src="http://img.youtube.com/vi/IqfIqArsWXA/0.jpg" 
 alt="cla" width="290" height="184" border="10" /></a>
-
-Perception in the Dark
-
-<img src="files/indark.gif" width="200">
-
-Test in Lab on a Moving Platform
-
-<img src="files/fj005.gif" width="200"> 
-
+| Perception in the Dark  | Explore the Lab |
+| ------------- | ------------- |
+| <img src="files/indark.gif" width="200">  | <img src="files/fj005.gif" width="200">  |
 ### Relevant publications:
 Chen, S., Chang, C.-W., & Wen, C.-Y. (2020). Perception in the Dark—Development of a ToF Visual Inertial Odometry System. Sensors, 20(5), 1263. doi: 10.3390/s20051263
 ### Introduction: 
 This work is the implement of the filter-based visual inertial odometry using a ToF camera input. The system has the capability to sense in the changing ambient light environment. 
-
 ### Prerequisites
 Ubuntu + ROS We have tested in the following environment:<br />
 Ubuntu 16.04 + [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu)<br />
 Ubuntu 18.04 + [ROS melodic](http://wiki.ros.org/melodic/Installation/Ubuntu)<br />
-
 ### Build and Run
 Clone the repository to the catkin work space eg. /catkin_ws/src
 ```
@@ -81,20 +70,17 @@ roslaunch vio bag.launch
 
 ### Evaluation 
 TUM scripts can be used to evaluate the result, the following are the exported of rosbag result:
-
-Handheld test
-
-<img src="files/HH.png" width="300">
-
-UAV test
-
-<img src="files/UAV.png" width="300">
-
-
-### Tips for making own experiment platform
-We can use light-weight PMD Flexx TOF-CAMERA: get [drivers](https://pmdtec.com/picofamily/software/) from the PMD website and install [ros wrapper](https://github.com/code-iai/pico_flexx_driver)
-You can use a pixhawk as an IMU with [mavros](http://wiki.ros.org/mavros)
-
+| Handheld test | UAV test |
+| ------------- | ------------- |
+| <img src="files/HH.png" width="300">  | <img src="files/UAV.png" width="300">  |
+### Experiment Platform Hardwar/Driver
+ToF Camera: <br />
+[PMD Flexx TOF-CAMERA](https://pmdtec.com/picofamily/flexx/) <br />
+[drivers](https://pmdtec.com/picofamily/software/)           <br />
+[ros wrapper](https://github.com/code-iai/pico_flexx_driver) <br />
+For IMU: <br />
+[Pixhawk](https://pixhawk.org/)                              <br />
+[mavros](http://wiki.ros.org/mavros)                         <br />
 ### Maintainer:
 [Shengyang Chen](https://www.polyu.edu.hk/researchgrp/cywen/index.php/en/people/researchstudent.html)(Dept.ME,PolyU): shengyang.chen@connect.polyu.hk <br />
 
