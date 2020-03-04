@@ -75,10 +75,10 @@ TUM scripts can be used to evaluate the result, the following are the exported o
 | <img src="files/HH.png" width="300">  | <img src="files/UAV.png" width="300">  |
 ### Experiment Platform Hardwar/Driver
 ToF Camera: <br />
-[PMD Flexx TOF-CAMERA](https://pmdtec.com/picofamily/flexx/) <br />
+[PMD Flexx ToF Camera](https://pmdtec.com/picofamily/flexx/) <br />
 [drivers](https://pmdtec.com/picofamily/software/)           <br />
 [ros wrapper](https://github.com/code-iai/pico_flexx_driver) <br />
-For IMU: <br />
+IMU: <br />
 [Pixhawk](https://pixhawk.org/)                              <br />
 [mavros](http://wiki.ros.org/mavros)                         <br />
 ### Maintainer:
