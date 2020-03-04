@@ -2,21 +2,23 @@
 
 TOF Camera Visual Initial Odometry
 
-**Video:**
+### Video:
 
 <a href="https://www.youtube.com/embed/IqfIqArsWXA" target="_blank"><img src="http://img.youtube.com/vi/IqfIqArsWXA/0.jpg" 
-alt="cla" width="360" height="230" border="10" /></a>
+alt="cla" width="290" height="184" border="10" /></a>
 
 Perception in the Dark
 
-<img src="files/indark.gif" width="300">
+<img src="files/indark.gif" width="200">
 
 Test in Lab on a Moving Platform
 
-<img src="files/fj005.gif" width="300"> 
+<img src="files/fj005.gif" width="200"> 
 
-**Related Papers:**
+### Relevant publications:
+Chen, S., Chang, C.-W., & Wen, C.-Y. (2020). Perception in the Dark—Development of a ToF Visual Inertial Odometry System. Sensors, 20(5), 1263. doi: 10.3390/s20051263
 ### Introduction: 
+This work is the implement of the filter-based visual inertial odometry using a ToF camera input. The system has the capability to sense in the changing ambient light environment. 
 
 ### Prerequisites
 Ubuntu + ROS We have tested in the following environment:<br />
