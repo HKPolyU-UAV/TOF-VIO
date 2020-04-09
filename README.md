@@ -20,6 +20,11 @@ Clone the repository to the catkin work space eg. /catkin_ws/src
 cd ~/catkin_ws/src
 git clone https://github.com/HKPolyU-UAV/TOF-VIO.git
 ```
+Install ros-pcl
+```
+sudo apt-get install ros-kinetic-pcl-*
+sudo apt-get install ros-melodic-pcl-*
+```
 Compile
 ```
 cd ~/catkin_ws
