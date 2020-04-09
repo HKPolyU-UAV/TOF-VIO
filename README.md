@@ -62,10 +62,10 @@ Place the .bag file into bag folder then modify the bag.launch file
 ```
 Run: <br />
 ```
-roslaunch vio rviz.launch
+roslaunch tof_vio rviz.launch
 ```
 ```
-roslaunch vio bag.launch
+roslaunch tof_vio bag.launch
 ```
 
 ### Evaluation 
