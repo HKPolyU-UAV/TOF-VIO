@@ -7,7 +7,7 @@ alt="cla" width="290" height="184" border="10" /></a>
 | ------------- | ------------- |
 | <img src="files/indark.gif" width="300">  | <img src="files/fj005.gif" width="300">  |
 ### Relevant publications:
-Chen, S., Chang, C.-W., & Wen, C.-Y. (2020). Perception in the Dark—Development of a ToF Visual Inertial Odometry System. Sensors, 20(5), 1263. doi: 10.3390/s20051263
+[Chen, S., Chang, C.-W., & Wen, C.-Y. (2020). Perception in the Dark—Development of a ToF Visual Inertial Odometry System. Sensors, 20(5), 1263. doi: 10.3390/s20051263](https://www.mdpi.com/1424-8220/20/5/1263/pdf)
 ### Introduction: 
 This work is the implement of the filter-based visual inertial odometry using a ToF camera input. The system has the capability to sense in the changing ambient light environment. 
 ### Prerequisites
