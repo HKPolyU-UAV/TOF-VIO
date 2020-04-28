@@ -9,13 +9,14 @@ alt="cla" width="290" height="184" border="10" /></a>
 ### Relevant publications:
 [Chen, S., Chang, C.-W., & Wen, C.-Y. (2020). Perception in the Dark—Development of a ToF Visual Inertial Odometry System. Sensors, 20(5), 1263. doi: 10.3390/s20051263](https://www.mdpi.com/1424-8220/20/5/1263/pdf)
 ### Introduction: 
-This work is the implement of the filter-based visual inertial odometry using a ToF camera input. The system has the capability to sense in the changing ambient light environment. 
+The work is the implement of the filter-based visual inertial odometry using a ToF camera input. The system has the capability to sense in the changing ambient light environment. 
 ### Prerequisites
-Ubuntu + ROS We have tested in the following environment:<br />
+Ubuntu + ROS <br />
+We have tested in the following environments:<br />
 Ubuntu 16.04 + [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu)<br />
 Ubuntu 18.04 + [ROS melodic](http://wiki.ros.org/melodic/Installation/Ubuntu)<br />
 ### Build and Run
-Clone the repository to the catkin work space eg. /catkin_ws/src
+Clone the repository to the catkin work space. E.g. /catkin_ws/src
 ```
 cd ~/catkin_ws/src
 git clone https://github.com/HKPolyU-UAV/TOF-VIO.git
@@ -74,7 +75,7 @@ roslaunch tof_vio bag.launch
 ```
 
 ### Evaluation 
-TUM scripts can be used to evaluate the result, the following are the exported of rosbag result:
+TUM scripts can be used to evaluate the result, the following are the exported results:
 | Handheld test | UAV test |
 | ------------- | ------------- |
 | <img src="files/HH.png" width="300">  | <img src="files/UAV.png" width="300">  |
